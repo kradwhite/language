@@ -48,9 +48,14 @@ abstract class Text
         if (!isset($this->texts[$id])) {
             throw new LangException("Locale={$this->locale}, Name={$this->name}. Не найдена фраза с идентификатором '$id'");
         }
-        if (!isset($this->texts[$id][1])) {
-            $this->texts[$id][1] = [];
+        if (isset($this->texts[$id][1])) {
+            $params = array_merge($this->texts[$id][1], $params);
         }
-        return sprintf($this->texts[$id][0], ...array_merge($this->texts[$id][1], $params));
+        try {
+            return sprintf($this->texts[$id][0], ...$params);
+        } catch (\Throwable $e) {
+            $params = implode(', ', $params);
+            throw new LangException("Неверные параметры '$params' фразы '{$this->texts[$id][0]}'", 0, $e);
+        }
     }
 }

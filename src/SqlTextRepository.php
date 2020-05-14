@@ -34,16 +34,19 @@ class SqlTextRepository implements TextRepository
      */
     public function __construct(array &$config)
     {
-        if (!isset($config['table'])) {
+        if (!isset($config['table']) || !$config['table']) {
             $config['table'] = 'kw_text';
         }
-        if (!isset($config['columns'])) {
+        if (!isset($config['columns']) || !$config['columns']) {
             $config['columns'] = [];
+        }
+        if (!isset($config['connection']) || !$config['connection']) {
+            $config['connection'] = new Connection(DriverFactory::buildFromArray($config));
         }
         $columns = ['id' => 'id', 'locale' => 'locale', 'params' => 'params', 'name' => 'name', 'text' => 'text'];
         $config['columns'] = array_merge($config['columns'], $columns);
         $this->config = $config;
-        $this->conn = new Connection(DriverFactory::buildFromArray($config));
+        $this->conn = $config['connection'];
     }
 
     /**
@@ -59,7 +62,9 @@ class SqlTextRepository implements TextRepository
     {
         $columns = &$this->config['columns'];
         $filter = [$columns['id'] => $id, $columns['locale'] => $locale, $columns['name'] => $name];
-        $text = $this->conn->selectOne($this->config['table'], [$columns['text'], $columns['params']], $filter)->prepareExecute('num');
+        if (!$text = $this->conn->selectOne($this->config['table'], [$columns['text'], $columns['params']], $filter)->prepareExecute('num')) {
+            $text = ['', '[]'];
+        }
         $text[1] = unserialize($text[1]);
         return $text;
     }

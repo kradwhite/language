@@ -9,6 +9,8 @@ declare (strict_types=1);
 
 namespace kradwhite\language;
 
+use kradwhite\db\exception\BeforeQueryException;
+
 /**
  * Class Language
  * @package kradwhite\language
@@ -23,20 +25,20 @@ class Language
 
     /**
      * Language constructor.
-     * @param array $config
+     * @param Config $config
      * @param string $locale
-     * @throws LangException
      */
-    public function __construct(array $config, string $locale = 'ru')
+    public function __construct(Config $config, string $locale = 'ru')
     {
         $this->locale = $locale;
-        $this->texts = new Texts($config);
+        $this->texts = $config->factory()->buildTexts($config);
     }
 
     /**
      * @param string $name
      * @return Text
      * @throws LangException
+     * @throws BeforeQueryException
      */
     public function text(string $name = ''): Text
     {
@@ -49,9 +51,18 @@ class Language
      * @param array $params
      * @return string
      * @throws LangException
+     * @throws BeforeQueryException
      */
     public function phrase(string $name, string $id, array $params = []): string
     {
         return $this->texts->getText($this->locale, $name)->phrase($id, $params);
+    }
+
+    /**
+     * @return string
+     */
+    public function locale(): string
+    {
+        return $this->locale;
     }
 }

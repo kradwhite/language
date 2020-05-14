@@ -9,42 +9,26 @@ declare (strict_types=1);
 
 namespace kradwhite\language;
 
+use kradwhite\db\exception\BeforeQueryException;
+
 /**
  * Class Texts
  * @package kradwhite\language
  */
 class Texts
 {
-    /** @var array */
-    private array $config;
+    /** @var Config */
+    private Config $config;
 
     /** @var Text[] */
     private array $texts = [];
 
-    /** @var TextFactory */
-    private TextFactory $factory;
-
     /**
      * Texts constructor.
-     * @param array $config
-     * @throws LangException
+     * @param Config $config
      */
-    public function __construct(array $config)
+    public function __construct(Config $config)
     {
-        if (!isset($config['default']) || !$config['default']) {
-            $config['default'] = 'default';
-        }
-        if (!isset($config['factory']) || !$config['factory']) {
-            $config['factory'] = TextFactory::class;
-        }
-        if (!is_a($config['factory'], TextFactory::class, true)) {
-            throw new LangException("Класс фабрики '{$config['factory']}' должен наследоваться " . TextFactory::class);
-        }
-        if (!isset($config['texts'])) {
-            throw new LangException("Конфигурация ресурсов должна содержать массив 'texts' => ['type' => "
-                . "'php|sql', 'names' => ['имена файлов без пути и расширения']]");
-        }
-        $this->factory = new $config['factory']();
         $this->config = $config;
     }
 
@@ -53,14 +37,15 @@ class Texts
      * @param string $name
      * @return Text
      * @throws LangException
+     * @throws BeforeQueryException
      */
     public function getText(string $locale, string $name): Text
     {
         if (!$name) {
-            $name = $this->config['default'];
+            $name = $this->config->defaultName();
         }
         if (!isset($this->texts[$name])) {
-            $this->texts[$name] = $this->factory->build($this->config, $locale, $name);
+            $this->texts[$name] = $this->config->factory()->buildText($this->config->configByName($name), $locale, $name);
         }
         return $this->texts[$name];
     }

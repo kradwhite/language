@@ -25,9 +25,8 @@ class TextFactory
      * @throws LangException
      * @throws BeforeQueryException
      */
-    public function build(array &$config, string $locale, string $name): Text
+    public function buildText(array $config, string $locale, string $name): Text
     {
-        $config = $this->getConfig($config, $name);
         if (in_array($config['type'], ['php'])) {
             return $this->buildFileText($config, $locale, $name);
         } else if (in_array($config['type'], ['sql'])) {
@@ -38,19 +37,12 @@ class TextFactory
     }
 
     /**
-     * @param array $config
-     * @param string $name
-     * @return array
-     * @throws LangException
+     * @param Config $config
+     * @return Texts
      */
-    private function getConfig(array &$config, string $name): array
+    public function buildTexts(Config $config): Texts
     {
-        foreach ($config['texts'] as &$source) {
-            if (in_array($name, $source['names'])) {
-                return $source;
-            }
-        }
-        throw new LangException("Имя ресурса '$name' не найдено");
+        return new Texts($config);
     }
 
     /**
