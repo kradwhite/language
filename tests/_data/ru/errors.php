@@ -5,9 +5,9 @@
  * Author: Artem Aleksandrov
  */
 
-use kradwhite\tests\_data\KwKey;
-
 declare (strict_types=1);
+
+use kradwhite\tests\_data\KwKey;
 
 return [
     KwKey::UpdateError => ['error message: %s']

@@ -40,13 +40,10 @@ class SqlTextRepository implements TextRepository
         if (!isset($config['columns']) || !$config['columns']) {
             $config['columns'] = [];
         }
-        if (!isset($config['connection']) || !$config['connection']) {
-            $config['connection'] = new Connection(DriverFactory::buildFromArray($config));
-        }
         $columns = ['id' => 'id', 'locale' => 'locale', 'params' => 'params', 'name' => 'name', 'text' => 'text'];
         $config['columns'] = array_merge($config['columns'], $columns);
         $this->config = $config;
-        $this->conn = $config['connection'];
+        $this->conn = new Connection(DriverFactory::buildFromArray($config['connection']));
     }
 
     /**
@@ -62,10 +59,11 @@ class SqlTextRepository implements TextRepository
     {
         $columns = &$this->config['columns'];
         $filter = [$columns['id'] => $id, $columns['locale'] => $locale, $columns['name'] => $name];
-        if (!$text = $this->conn->selectOne($this->config['table'], [$columns['text'], $columns['params']], $filter)->prepareExecute('num')) {
-            $text = ['', '[]'];
+        $text = $this->conn->selectOne($this->config['table'], [$columns['text'], $columns['params']], $filter)->prepareExecute('num');
+        if (count($text) < 2) {
+            $text = ['', json_encode([])];
         }
-        $text[1] = unserialize($text[1]);
+        $text[1] = json_decode($text[1], true);
         return $text;
     }
 }

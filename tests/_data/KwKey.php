@@ -15,5 +15,5 @@ namespace kradwhite\tests\_data;
  */
 class KwKey
 {
-    const UpdateError = 1;
+    const UpdateError = 'update-error';
 }

@@ -1,0 +1,22 @@
+version: '3'
+services:
+  php:
+    build: ./docker/php
+    volumes:
+      - ./:/root/app
+    links:
+      - pgsql
+  pgsql:
+    image: postgres:12
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=test-2
+volumes:
+  pgsql-data:
+    external: false

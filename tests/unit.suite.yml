@@ -4,7 +4,14 @@
 
 actor: UnitTester
 modules:
-    enabled:
-        - Asserts
-        - \Helper\Unit
-    step_decorators: ~        
+  enabled:
+    - Asserts
+    - \Helper\Unit
+    - Db:
+        dsn: 'pgsql:host=pgsql;dbname=test-2;port=5432'
+        user: 'admin'
+        password: 'admin'
+        cleanup: true
+        populate: true
+        dump: 'tests/_data/postgre.sql'
+  step_decorators: ~
