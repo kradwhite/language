@@ -2,10 +2,8 @@
 
 namespace kradwhite\tests\unit;
 
-use Codeception\Stub;
 use kradwhite\language\Config;
 use kradwhite\language\LangException;
-use kradwhite\language\SqlTextRepository;
 use kradwhite\language\TextFactory;
 use kradwhite\language\Texts;
 
