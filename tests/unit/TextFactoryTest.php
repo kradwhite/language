@@ -4,8 +4,8 @@ namespace kradwhite\tests\unit;
 
 use kradwhite\language\Config;
 use kradwhite\language\LangException;
-use kradwhite\language\TextFactory;
-use kradwhite\language\Texts;
+use kradwhite\language\text\TextFactory;
+use kradwhite\language\text\Texts;
 
 class TextFactoryTest extends \Codeception\Test\Unit
 {
@@ -68,7 +68,7 @@ class TextFactoryTest extends \Codeception\Test\Unit
 
     public function testBuildDbTextSuccess()
     {
-        $connection = ['user' => 'admin', 'password' => 'admin', 'host' => 'pgsql', 'dbName' => 'test-2', 'driver' => 'pgsql'];
+        $connection = $this->tester->getConnectionConfig();
         $text = (new TextFactory())->buildText(['type' => 'sql', 'connection' => $connection], 'ru', 'errors');
         $message = $text->phrase('update-error', ['variable']);
         $this->assertEquals('error message: variable', $message);

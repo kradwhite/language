@@ -3,11 +3,11 @@
 namespace kradwhite\tests\unit;
 
 use kradwhite\language\Config;
-use kradwhite\language\FileText;
+use kradwhite\language\text\FileText;
 use kradwhite\language\Language;
-use kradwhite\language\Text;
-use kradwhite\language\TextFactory;
-use kradwhite\language\Texts;
+use kradwhite\language\text\Text;
+use kradwhite\language\text\TextFactory;
+use kradwhite\language\text\Texts;
 
 class LanguageTest extends \Codeception\Test\Unit
 {

@@ -7,7 +7,7 @@
 
 declare (strict_types=1);
 
-namespace kradwhite\language;
+namespace kradwhite\language\text;
 
 use kradwhite\db\Connection;
 use kradwhite\db\driver\DriverFactory;
@@ -59,11 +59,10 @@ class SqlTextRepository implements TextRepository
     {
         $columns = &$this->config['columns'];
         $filter = [$columns['id'] => $id, $columns['locale'] => $locale, $columns['name'] => $name];
-        $text = $this->conn->selectOne($this->config['table'], [$columns['text'], $columns['params']], $filter)->prepareExecute('num');
-        if (count($text) < 2) {
-            $text = ['', json_encode([])];
+        if ($text = $this->conn->selectOne($this->config['table'], [$columns['text'], $columns['params']], $filter)
+            ->prepareExecute('num')) {
+            $text[1] = json_decode($text[1], true);
         }
-        $text[1] = json_decode($text[1], true);
         return $text;
     }
 }

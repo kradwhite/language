@@ -2,8 +2,8 @@
 
 namespace kradwhite\tests\unit;
 
-use kradwhite\language\DbText;
-use kradwhite\language\SqlTextRepository;
+use kradwhite\language\text\DbText;
+use kradwhite\language\text\SqlTextRepository;
 
 class DbTextTest extends \Codeception\Test\Unit
 {

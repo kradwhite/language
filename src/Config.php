@@ -10,6 +10,8 @@ declare (strict_types=1);
 namespace kradwhite\language;
 
 
+use kradwhite\language\text\TextFactory;
+
 class Config
 {
     /** @var array */

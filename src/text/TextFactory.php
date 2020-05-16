@@ -7,9 +7,11 @@
 
 declare (strict_types=1);
 
-namespace kradwhite\language;
+namespace kradwhite\language\text;
 
 use kradwhite\db\exception\BeforeQueryException;
+use kradwhite\language\Config;
+use kradwhite\language\LangException;
 
 /**
  * Class TextFactory

@@ -10,6 +10,8 @@ declare (strict_types=1);
 namespace kradwhite\language;
 
 use kradwhite\db\exception\BeforeQueryException;
+use kradwhite\language\text\Text;
+use kradwhite\language\text\Texts;
 
 /**
  * Class Language

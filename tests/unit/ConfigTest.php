@@ -4,7 +4,7 @@ namespace kradwhite\tests\unit;
 
 use kradwhite\language\Config;
 use kradwhite\language\LangException;
-use kradwhite\language\TextFactory;
+use kradwhite\language\text\TextFactory;
 
 class ConfigTest extends \Codeception\Test\Unit
 {

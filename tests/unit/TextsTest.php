@@ -3,9 +3,9 @@
 namespace kradwhite\tests\unit;
 
 use kradwhite\language\Config;
-use kradwhite\language\FileText;
-use kradwhite\language\TextFactory;
-use kradwhite\language\Texts;
+use kradwhite\language\text\FileText;
+use kradwhite\language\text\TextFactory;
+use kradwhite\language\text\Texts;
 
 class TextsTest extends \Codeception\Test\Unit
 {

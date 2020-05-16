@@ -2,7 +2,7 @@
 
 namespace kradwhite\tests\unit;
 
-use kradwhite\language\FileText;
+use kradwhite\language\text\FileText;
 use kradwhite\language\LangException;
 
 class FileTextTest extends \Codeception\Test\Unit

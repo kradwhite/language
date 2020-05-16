@@ -1,4 +1,5 @@
 <?php
+
 namespace Helper;
 
 // here you can define custom actions
@@ -6,5 +7,14 @@ namespace Helper;
 
 class Unit extends \Codeception\Module
 {
-
+    public function getConnectionConfig()
+    {
+        return [
+            'user' => 'admin',
+            'password' => 'admin',
+            'dbName' => 'test-2',
+            'host' => 'pgsql',
+            'driver' => 'pgsql'
+        ];
+    }
 }

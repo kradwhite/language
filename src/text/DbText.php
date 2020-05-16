@@ -7,7 +7,7 @@
 
 declare (strict_types=1);
 
-namespace kradwhite\language;
+namespace kradwhite\language\text;
 
 /**
  * Class DbText
