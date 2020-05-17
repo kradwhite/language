@@ -99,10 +99,10 @@ class ConfigTest extends \Codeception\Test\Unit
     {
         $this->tester->amInPath('tests/_data');
         $pwd = getcwd();
-        if (file_exists("$pwd/language/language.php")) {
-            $this->tester->deleteFile("$pwd/language/language.php", '<?php');
+        if (file_exists("$pwd/config/language.php")) {
+            $this->tester->deleteFile("$pwd/config/language.php", '<?php');
         }
-        (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($pwd . '/language');
-        $this->assertFileExists($pwd . '/language/language.php');
+        (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($pwd . '/config');
+        $this->assertFileExists($pwd . '/config/language.php');
     }
 }
