@@ -23,7 +23,7 @@ class FileTextTest extends \Codeception\Test\Unit
     // tests
     public function testPhraseNotFound()
     {
-        $this->tester->expectThrowable(new LangException("Locale=ru, Name=error. Не найдена фраза с идентификатором 'not_exist'"), function () {
+        $this->tester->expectThrowable(new LangException("В языке 'ru' в тексте 'error' не найдена фраза с идентификатором 'not_exist'"), function () {
             (new FileText('ru', 'error', []))->phrase('not_exist', []);
         });
     }

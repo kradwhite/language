@@ -12,10 +12,10 @@ return [
         [
             'type' => 'php',
             'names' => ['errors'],
-            'directory' => __DIR__ . '/',
+            'directory' => __DIR__,
         ],
         [
-            'type' => 'sql',
+            'type' => 'database',
             'names' => ['messages'],
             'connection' => [],
         ]

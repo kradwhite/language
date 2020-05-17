@@ -34,7 +34,7 @@ class Config
         }
         if (!isset($config['texts'])) {
             throw new LangException("Конфигурация ресурсов должна содержать массив 'texts' => ['type' => "
-                . "'php|sql', 'names' => ['имена файлов без пути и расширения']]");
+                . "'php|database', 'names' => ['имена файлов без пути и расширения']]");
         }
         $config['factory'] = new $config['factory']();
         $this->config = $config;
@@ -69,5 +69,26 @@ class Config
             }
         }
         throw new LangException("Имя ресурса '$name' не найдено");
+    }
+
+    /**
+     * @param string $path
+     * @throws LangException
+     */
+    public function create(string $path)
+    {
+        $source = __DIR__ . DIRECTORY_SEPARATOR . 'language.php';
+        $target = $path . DIRECTORY_SEPARATOR . 'language.php';
+        if (!file_exists($path)) {
+            throw new LangException("Директория '$path' не существует");
+        } else if (!is_dir($path)) {
+            throw new LangException("'$path' не является директорией");
+        } else if (file_exists($target)) {
+            throw new LangException("Файл конфигурации '$target' уже существует");
+        } else if (!file_exists($source)) {
+            throw new LangException("Исходный файл конфигурации языков не найден '$source'");
+        } else if (!copy($source, $target)) {
+            throw new LangException("Ошибка копирования файла конфигурации '$target'");
+        }
     }
 }

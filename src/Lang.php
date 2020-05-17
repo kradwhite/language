@@ -14,10 +14,10 @@ use kradwhite\language\text\Text;
 use kradwhite\language\text\Texts;
 
 /**
- * Class Language
+ * Class Lang
  * @package kradwhite\language
  */
-class Language
+class Lang
 {
     /** @var string */
     private string $locale;
@@ -25,14 +25,18 @@ class Language
     /** @var Texts */
     private ?Texts $texts;
 
+    /** @var Config */
+    private ?Config $config;
+
     /**
-     * Language constructor.
+     * Lang constructor.
      * @param Config $config
      * @param string $locale
      */
     public function __construct(Config $config, string $locale = 'ru')
     {
         $this->locale = $locale;
+        $this->config = $config;
         $this->texts = $config->factory()->buildTexts($config);
     }
 
@@ -66,5 +70,13 @@ class Language
     public function locale(): string
     {
         return $this->locale;
+    }
+
+    /**
+     * @return Config
+     */
+    public function config(): Config
+    {
+        return $this->config;
     }
 }

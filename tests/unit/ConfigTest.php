@@ -31,7 +31,7 @@ class ConfigTest extends \Codeception\Test\Unit
 
     public function testInitFailNotFoundTexts()
     {
-        $this->tester->expectThrowable(new LangException("Конфигурация ресурсов должна содержать массив 'texts' => ['type' => 'php|sql', 'names' => ['имена файлов без пути и расширения']]"), function () {
+        $this->tester->expectThrowable(new LangException("Конфигурация ресурсов должна содержать массив 'texts' => ['type' => 'php|database', 'names' => ['имена файлов без пути и расширения']]"), function () {
             new Config([]);
         });
     }
@@ -62,5 +62,47 @@ class ConfigTest extends \Codeception\Test\Unit
         $config = new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]);
         $result = $config->configByName('one');
         $this->assertEquals(['names' => ['one']], $result);
+    }
+
+    public function testCreateFailDirectoryNotExist()
+    {
+        $this->tester->expectThrowable(new LangException("Директория 'path/not/exist' не существует"), function () {
+            (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create('path/not/exist');
+        });
+    }
+
+    public function testCreateFailNotDirectory()
+    {
+        $path = __DIR__ . '/../_data/language.php';
+        $this->tester->expectThrowable(new LangException("'$path' не является директорией"), function () use ($path) {
+            (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($path);
+        });
+    }
+
+    public function testCreateFailAlreadyExist()
+    {
+        $path = __DIR__ . '/../_data';
+        $this->tester->expectThrowable(new LangException("Файл конфигурации '$path/language.php' уже существует"), function () use ($path) {
+            (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($path);
+        });
+    }
+
+    public function testCreateFailSourceNotFound()
+    {
+        $path = __DIR__ . '/../_data';
+        $this->tester->expectThrowable(new LangException("Файл конфигурации '$path/language.php' уже существует"), function () use ($path) {
+            (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($path);
+        });
+    }
+
+    public function testCreateSuccess()
+    {
+        $this->tester->amInPath('tests/_data');
+        $pwd = getcwd();
+        if (file_exists("$pwd/language/language.php")) {
+            $this->tester->deleteFile("$pwd/language/language.php", '<?php');
+        }
+        (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($pwd . '/language');
+        $this->assertFileExists($pwd . '/language/language.php');
     }
 }

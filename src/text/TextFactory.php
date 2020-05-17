@@ -31,7 +31,7 @@ class TextFactory
     {
         if (in_array($config['type'], ['php'])) {
             return $this->buildFileText($config, $locale, $name);
-        } else if (in_array($config['type'], ['sql'])) {
+        } else if (in_array($config['type'], ['database'])) {
             return $this->buildDbText($config, $locale, $name);
         } else {
             throw new LangException("Неизвестный тип '{$config['type']}' ресурсов");
@@ -88,15 +88,19 @@ class TextFactory
      * @param string $name
      * @return DbText
      * @throws LangException
-     * @throws BeforeQueryException
      */
     private function buildDbText(array &$config, string $locale, string $name): DbText
     {
         if (!isset($config['connection'])) {
             throw new LangException("Для ресурсов типа '{$config['type']}' требуется конфигурация 'connection' => []");
         }
-        if ($config['type'] == 'sql') {
-            $repository = new SqlTextRepository($config);
+        if (!isset($config['repository'])) {
+            $config['repository'] = SqlTextRepository::class;
+        } else if (!is_a($config['repository'], TextRepository::class, true)) {
+            throw new LangException("Класс репозитория '{$config['repository']}' должен реализовывать интерфейс '" . TextRepository::class . "'");
+        }
+        if ($config['type'] == 'database') {
+            $repository = new $config['repository']($config);
         } else {
             throw new LangException("Неизвестный тип '{$config['type']}' базы данных");
         }

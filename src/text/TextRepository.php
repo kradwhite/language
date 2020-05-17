@@ -16,6 +16,12 @@ namespace kradwhite\language\text;
 interface TextRepository
 {
     /**
+     * TextRepository constructor.
+     * @param array $config
+     */
+    public function __construct(array &$config);
+
+    /**
      * @param string $locale
      * @param string $name
      * @param string $id

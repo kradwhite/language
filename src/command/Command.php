@@ -13,7 +13,7 @@ use kradwhite\db\exception\DbException;
 use kradwhite\db\exception\PdoException;
 use kradwhite\language\Config;
 use kradwhite\language\LangException;
-use kradwhite\language\Language;
+use kradwhite\language\Lang;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,8 +24,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class Command extends \Symfony\Component\Console\Command\Command
 {
-    /** @var Language */
-    private ?Language $app = null;
+    /** @var Lang */
+    private ?Lang $app = null;
 
     /**
      * @param InputInterface $input

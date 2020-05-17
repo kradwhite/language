@@ -5,6 +5,7 @@ namespace kradwhite\tests\unit;
 use kradwhite\language\Config;
 use kradwhite\language\LangException;
 use kradwhite\language\text\TextFactory;
+use kradwhite\language\text\TextRepository;
 use kradwhite\language\text\Texts;
 
 class TextFactoryTest extends \Codeception\Test\Unit
@@ -61,15 +62,22 @@ class TextFactoryTest extends \Codeception\Test\Unit
 
     public function testBuildDbTextNotFoundConnection()
     {
-        $this->tester->expectThrowable(new LangException("Для ресурсов типа 'sql' требуется конфигурация 'connection' => []"), function () {
-            (new TextFactory())->buildText(['type' => 'sql'], 'ru', 'name');
+        $this->tester->expectThrowable(new LangException("Для ресурсов типа 'database' требуется конфигурация 'connection' => []"), function () {
+            (new TextFactory())->buildText(['type' => 'database'], 'ru', 'name');
+        });
+    }
+
+    public function testBuildDbTextWrongRepositoryClass()
+    {
+        $this->tester->expectThrowable(new LangException("Класс репозитория 'class' должен реализовывать интерфейс '" . TextRepository::class . "'"), function () {
+            (new TextFactory())->buildText(['type' => 'database', 'repository' => 'class', 'connection' => []], 'ru', 'name');
         });
     }
 
     public function testBuildDbTextSuccess()
     {
         $connection = $this->tester->getConnectionConfig();
-        $text = (new TextFactory())->buildText(['type' => 'sql', 'connection' => $connection], 'ru', 'errors');
+        $text = (new TextFactory())->buildText(['type' => 'database', 'connection' => $connection], 'ru', 'errors');
         $message = $text->phrase('update-error', ['variable']);
         $this->assertEquals('error message: variable', $message);
     }

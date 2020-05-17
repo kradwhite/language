@@ -35,7 +35,7 @@ class SqlTextRepository implements TextRepository
     public function __construct(array &$config)
     {
         if (!isset($config['table']) || !$config['table']) {
-            $config['table'] = 'kw_text';
+            $config['table'] = 'kw_language';
         }
         if (!isset($config['columns']) || !$config['columns']) {
             $config['columns'] = [];
@@ -57,9 +57,9 @@ class SqlTextRepository implements TextRepository
      */
     public function loadPhrase(string $locale, string $name, string $id): array
     {
-        $columns = &$this->config['columns'];
-        $filter = [$columns['id'] => $id, $columns['locale'] => $locale, $columns['name'] => $name];
-        if ($text = $this->conn->selectOne($this->config['table'], [$columns['text'], $columns['params']], $filter)
+        $cs = &$this->config['columns'];
+        $filter = [$cs['id'] => $id, $cs['locale'] => $locale, $cs['name'] => $name];
+        if ($text = $this->conn->selectOne($this->config['table'], [$cs['text'], $cs['params']], $filter)
             ->prepareExecute('num')) {
             $text[1] = json_decode($text[1], true);
         }

@@ -48,7 +48,7 @@ abstract class Text
     public function phrase(string $id, array $params): string
     {
         if (!isset($this->texts[$id])) {
-            throw new LangException("Locale={$this->locale}, Name={$this->name}. Не найдена фраза с идентификатором '$id'");
+            throw new LangException("В языке '{$this->locale}' в тексте '{$this->name}' не найдена фраза с идентификатором '$id'");
         }
         if (isset($this->texts[$id][1])) {
             $params = array_merge($this->texts[$id][1], $params);
