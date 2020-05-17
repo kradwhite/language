@@ -31,7 +31,7 @@ class TextFactory
     {
         if (in_array($config['type'], ['php'])) {
             return $this->buildFileText($config, $locale, $name);
-        } else if (in_array($config['type'], ['database'])) {
+        } else if ($config['type'] == 'database') {
             return $this->buildDbText($config, $locale, $name);
         } else {
             throw new LangException("Неизвестный тип '{$config['type']}' ресурсов");
@@ -45,6 +45,23 @@ class TextFactory
     public function buildTexts(Config $config): Texts
     {
         return new Texts($config);
+    }
+
+    /**
+     * @param array $config
+     * @param array $locales
+     * @return void
+     * @throws LangException
+     */
+    public function initTexts(array $config, array $locales)
+    {
+        if (in_array($config['type'], ['php'])) {
+            $this->initFileTexts($config, $locales);
+        } else if ($config['type'] == 'database') {
+            $this->initDbTexts($config, $locales);
+        } else {
+            throw new LangException("Неизвестный тип '{$config['type']}' ресурсов");
+        }
     }
 
     /**
@@ -91,6 +108,52 @@ class TextFactory
      */
     private function buildDbText(array &$config, string $locale, string $name): DbText
     {
+        return new DbText($locale, $name, $this->buildTextRepository($config));
+    }
+
+    /**
+     * @param array $config
+     * @param array $locales
+     * @return void
+     * @throws LangException
+     */
+    private function initFileTexts(array $config, array $locales)
+    {
+        if (!isset($config['directory'])) {
+            throw new LangException("Для ресурсов типа '{$config['type']}' требуется имя директории 'directory' => 'path'");
+        }
+        foreach ($locales as $locale) {
+            $localePath = $config['directory'] . DIRECTORY_SEPARATOR . $locale;
+            if (!file_exists($locale)) {
+                mkdir($localePath, 0664);
+            }
+            foreach ($config['names'] as $name) {
+                $filename = $localePath . DIRECTORY_SEPARATOR . "$name.php";
+                if (!file_exists($filename)) {
+                    touch($filename);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param array $locales
+     * @return void
+     * @throws LangException
+     */
+    private function initDbTexts(array $config, array $locales)
+    {
+        $this->buildTextRepository($config)->createTable($config['table'], $config['columns'], $locales);
+    }
+
+    /**
+     * @param array $config
+     * @return TextRepository
+     * @throws LangException
+     */
+    private function buildTextRepository(array &$config): TextRepository
+    {
         if (!isset($config['connection'])) {
             throw new LangException("Для ресурсов типа '{$config['type']}' требуется конфигурация 'connection' => []");
         }
@@ -100,10 +163,9 @@ class TextFactory
             throw new LangException("Класс репозитория '{$config['repository']}' должен реализовывать интерфейс '" . TextRepository::class . "'");
         }
         if ($config['type'] == 'database') {
-            $repository = new $config['repository']($config);
+            return new $config['repository']($config);
         } else {
             throw new LangException("Неизвестный тип '{$config['type']}' базы данных");
         }
-        return new DbText($locale, $name, $repository);
     }
 }

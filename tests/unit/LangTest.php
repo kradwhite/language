@@ -30,7 +30,7 @@ class LangTest extends \Codeception\Test\Unit
         $text = $this->make(Text::class);
         $config = $this->make(Config::class,
             ['factory' => $this->make(TextFactory::class,
-                ['buildTexts' => $this->make(Texts::class, ['getText' => $text])])]);
+                ['buildTexts' => $this->make(Texts::class, ['getText' => $text])]), 'existLocale' => true, 'locale' => 'ru']);
         $app = new Lang($config);
         $result = $app->text();
         $this->assertEquals($text, $result);
@@ -40,7 +40,7 @@ class LangTest extends \Codeception\Test\Unit
     {
         $config = $this->make(Config::class,
             ['factory' => $this->make(TextFactory::class,
-                ['buildTexts' => $this->make(Texts::class)])]);
+                ['buildTexts' => $this->make(Texts::class)]), 'existLocale' => true, 'locale' => 'ru']);
         $app = new Lang($config);
         $result = $app->locale();
         $this->assertEquals('ru', $result);
@@ -51,7 +51,7 @@ class LangTest extends \Codeception\Test\Unit
         $text = $this->make(FileText::class, ['phrase' => 'message']);
         $config = $this->make(Config::class,
             ['factory' => $this->make(TextFactory::class,
-                ['buildTexts' => $this->make(Texts::class, ['getText' => $text])])]);
+                ['buildTexts' => $this->make(Texts::class, ['getText' => $text])]), 'existLocale' => true, 'locale' => 'ru']);
         $app = new Lang($config);
         $result = $app->phrase('name', 'id');
         $this->assertEquals('message', $result);

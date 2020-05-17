@@ -9,11 +9,13 @@ declare (strict_types=1);
 
 namespace kradwhite\language;
 
-
 use kradwhite\language\text\TextFactory;
 
 class Config
 {
+    /** @var string */
+    const Name = 'language.php';
+
     /** @var array */
     private array $config;
 
@@ -24,6 +26,9 @@ class Config
      */
     public function __construct(array $config)
     {
+        if (!isset($config['locales'])) {
+            $config['locales'] = ['ru'];
+        }
         if (!isset($config['factory']) || !$config['factory']) {
             $config['factory'] = TextFactory::class;
         } else if (!is_a($config['factory'], TextFactory::class, true)) {
@@ -77,8 +82,8 @@ class Config
      */
     public function create(string $path)
     {
-        $source = __DIR__ . DIRECTORY_SEPARATOR . 'language.php';
-        $target = $path . DIRECTORY_SEPARATOR . 'language.php';
+        $source = __DIR__ . DIRECTORY_SEPARATOR . self::Name;
+        $target = $path . DIRECTORY_SEPARATOR . self::Name;
         if (!file_exists($path)) {
             throw new LangException("Директория '$path' не существует");
         } else if (!is_dir($path)) {
@@ -89,6 +94,42 @@ class Config
             throw new LangException("Исходный файл конфигурации языков не найден '$source'");
         } else if (!copy($source, $target)) {
             throw new LangException("Ошибка копирования файла конфигурации '$target'");
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function locales(): array
+    {
+        return $this->config['locales'];
+    }
+
+    /**
+     * @return string
+     */
+    public function locale(): string
+    {
+        return $this->config['locales'][0];
+    }
+
+    /**
+     * @param string $locale
+     * @return bool
+     */
+    public function existLocale(string $locale): bool
+    {
+        return in_array($locale, $this->config['locales']);
+    }
+
+    /**
+     * @return void
+     * @throws LangException
+     */
+    public function init()
+    {
+        foreach ($this->config['texts'] as &$text) {
+            $this->factory()->initTexts($text, $this->locales());
         }
     }
 }

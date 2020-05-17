@@ -12,6 +12,7 @@ namespace kradwhite\language\text;
 use kradwhite\db\Connection;
 use kradwhite\db\driver\DriverFactory;
 use kradwhite\db\exception\BeforeQueryException;
+use kradwhite\db\exception\DbException;
 use kradwhite\db\exception\PdoException;
 use kradwhite\db\exception\PdoStatementException;
 
@@ -64,5 +65,35 @@ class SqlTextRepository implements TextRepository
             $text[1] = json_decode($text[1], true);
         }
         return $text;
+    }
+
+    /**
+     * @param string $name
+     * @param array $columns
+     * @param array $locales
+     * @return bool|void
+     * @throws BeforeQueryException
+     * @throws PdoException
+     * @throws DbException
+     */
+    public function createTable(string $name, array $columns, array $locales)
+    {
+        $database = $this->config['connection']['dbName'];
+        if (!isset($config['textLimit'])) {
+            $config['textLimit'] = 256;
+        }
+        if (!isset($config['paramsLimit'])) {
+            $config['paramsLimit'] = 256;
+        }
+        if (!in_array($name, $this->conn->meta()->tables($database))) {
+            $this->conn->table($name)
+                ->addColumn($columns['id'], 'string', ['limit' => 64, 'null' => false])
+                ->addColumn($columns['locale'], 'string', ['limit' => 5, 'null' => false])
+                ->addColumn($columns['name'], 'string', ['limit' => 64, 'null' => false])
+                ->addColumn($columns['text'], 'string', ['limit' => $this->config['textLimit'], 'null' => false])
+                ->addColumn($columns['params'], 'string', ['limit' => $this->config['paramsLimit'], 'null' => false, 'default' => json_encode([])])
+                ->addIndex(['locale', 'id', 'name'], ['unique' => true])
+                ->create();
+        }
     }
 }

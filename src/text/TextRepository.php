@@ -28,4 +28,11 @@ interface TextRepository
      * @return array
      */
     public function loadPhrase(string $locale, string $name, string $id): array;
+
+    /**
+     * @param string $name
+     * @param array $columns
+     * @param array $locales
+     */
+    public function createTable(string $name, array $columns, array $locales);
 }

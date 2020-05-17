@@ -10,10 +10,9 @@ declare (strict_types=1);
 namespace kradwhite\language\command;
 
 use kradwhite\db\exception\DbException;
-use kradwhite\db\exception\PdoException;
 use kradwhite\language\Config;
-use kradwhite\language\LangException;
 use kradwhite\language\Lang;
+use kradwhite\language\LangException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,16 +29,20 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return App|null
-     * @throws MigrationException
+     * @return Lang|null
+     * @throws LangException
      */
-    protected function buildApp(InputInterface $input, OutputInterface $output): ?App
+    protected function buildApp(InputInterface $input, OutputInterface $output): ?Lang
     {
         if (!$this->app) {
             if (!$target = $this->getConfigFileName($input)) {
                 $output->writeln('<fg=red>Ошика получения рабочего каталога. Возмножно нехватает доступа на чтение у одно из каталогов в цепочке.</>');
+            } else if (!file_exists($target)) {
+                $output->writeln("<fg=red>Файла '$target' не существует");
+            } else {
+                $config = new Config(require $target);
+                $this->app = $target ? new Lang($config, $input->getOption('locale')) : null;
             }
-            $this->app = $target ? new App($target) : null;
         }
         return $this->app;
     }
@@ -69,7 +72,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      * @param OutputInterface $output
      * @return void
      * @throws LangException
-     * @throws PdoException
+     * @throws DbException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -87,7 +90,9 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     protected function configure()
     {
         $this->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
-            'Путь хранения файла конфигурации языка');
+            'Путь хранения файла конфигурации языка')
+            ->addOption('locale', 'l', InputOption::VALUE_REQUIRED,
+                'Локализация, ru, en и т.д.', 'ru');
     }
 
     /**

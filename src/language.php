@@ -6,6 +6,9 @@
  */
 
 return [
+    // первое значение, будет значением по умолчанию
+    //'locales' => ['ru'],
+    // имя текста по умолчанию
     //'default' => 'errors',
     //'factory' => \kradwhite\language\text\TextFactory::class,
     'texts' => [
@@ -21,6 +24,8 @@ return [
             'type' => 'database',
             'names' => ['messages'],
             'table' => 'kw_language',
+            'textLimit' => 256                                          // ограничение длинны фразы в бд
+            'paramsLimit' => 256                                        // ограничение длинны строки параметров в бд
             'columns => [
                 'locale' => 'locale',
                 'name' => 'name',
@@ -30,7 +35,7 @@ return [
             ],
             'repository' => \kradwhite\language\text\SqlTextRepository::class,
             'connection' => [
-                'driver' => 'pgsql',    // или 'mysql'
+                'driver' => 'pgsql',                                // или 'mysql'
                 'host' => 'localhost',
                 'user' => 'admin',
                 'password' => 'admin',

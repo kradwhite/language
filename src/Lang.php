@@ -32,11 +32,16 @@ class Lang
      * Lang constructor.
      * @param Config $config
      * @param string $locale
+     * @throws LangException
      */
     public function __construct(Config $config, string $locale = 'ru')
     {
-        $this->locale = $locale;
         $this->config = $config;
+        if ($locale && !$config->existLocale($locale)) {
+            $localesStr = implode('|', $config->locales());
+            throw new LangException("Неизвестный язык '$locale'. Допустимые значения [$localesStr]");
+        }
+        $this->locale = $locale ? $locale : $config->locale();
         $this->texts = $config->factory()->buildTexts($config);
     }
 
