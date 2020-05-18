@@ -52,5 +52,5 @@
     "config": {
         "sort-packages": true
     },
-    "bin": ["src/index.php", "bin/language"]
+    "bin": ["src/lang"]
 }
