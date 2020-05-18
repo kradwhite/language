@@ -1,11 +1,11 @@
+#!/usr/bin/env php
+
 <?php
 /**
  * Date: 11.04.2020
  * Time: 13:21
  * Author: Artem Aleksandrov
  */
-
-declare (strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
