@@ -10,14 +10,14 @@ declare (strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use kradwhite\language\command\ConfigCommand;
-use kradwhite\language\command\TextsCommand;
+use kradwhite\language\command\InitCommand;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
 
 $application->addCommands([
     new ConfigCommand(),
-    new TextsCommand(),
+    new InitCommand(),
 ]);
 
 $application->run();

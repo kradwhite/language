@@ -13,13 +13,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class TextsCommand
+ * Class InitCommand
  * @package kradwhite\language\command
  */
-class TextsCommand extends Command
+class InitCommand extends Command
 {
     /** @var string */
-    protected static $defaultName = 'texts';
+    protected static $defaultName = 'init';
 
     /**
      * @return void
@@ -40,7 +40,8 @@ class TextsCommand extends Command
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
         if ($app = $this->buildApp($input, $output)) {
-            $app->init();
+            $app->config()->init();
         }
+        return (int)!$app;
     }
 }

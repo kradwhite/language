@@ -2,6 +2,8 @@
 
 namespace kradwhite\tests\unit;
 
+use kradwhite\db\Connection;
+use kradwhite\db\driver\DriverFactory;
 use kradwhite\language\Config;
 use kradwhite\language\LangException;
 use kradwhite\language\text\TextFactory;
@@ -80,5 +82,49 @@ class TextFactoryTest extends \Codeception\Test\Unit
         $text = (new TextFactory())->buildText(['type' => 'database', 'connection' => $connection], 'ru', 'errors');
         $message = $text->phrase('update-error', ['variable']);
         $this->assertEquals('error message: variable', $message);
+    }
+
+    public function testInitTextsFileDirectoryNotFound()
+    {
+        $this->tester->expectThrowable(new LangException("Для ресурсов типа 'php' требуется имя директории 'directory' => 'path'"), function () {
+            (new TextFactory())->initTexts(['type' => 'php'], ['ru']);
+        });
+    }
+
+    public function testInitTextsFileSuccess()
+    {
+        $this->tester->amInPath('tests/_data');
+        $path = getcwd();
+        if (file_exists("$path/en")) {
+            $this->tester->deleteDir("$path/en");
+        }
+        if (file_exists("$path/ru/test1.php")) {
+            $this->tester->deleteFile("$path/ru/test1.php");
+        }
+        if (file_exists("$path/ru/test2.php")) {
+            $this->tester->deleteFile("$path/ru/test2.php");
+        }
+        (new TextFactory())->initTexts(['type' => 'php', 'names' => ['test1', 'test2'], 'directory' => $path], ['ru', 'en']);
+        $this->assertDirectoryExists("$path/en");
+        $this->assertFileExists("$path/en/test1.php");
+        $this->assertFileExists("$path/en/test2.php");
+        $this->assertFileExists("$path/ru/test1.php");
+        $this->assertFileExists("$path/ru/test2.php");
+        chmod("$path/en", 0777);
+        chmod("$path/en/test1.php", 0666);
+        chmod("$path/en/test2.php", 0666);
+        chmod("$path/ru/test1.php", 0666);
+        chmod("$path/ru/test2.php", 0666);
+    }
+
+    public function testInitTextsDbExistTable()
+    {
+        (new TextFactory())->initTexts(['type' => 'database', 'connection' => $this->tester->getConnectionConfig()], ['ru']);
+    }
+
+    public function testInitTextsDbNotExistTable()
+    {
+        (new Connection(DriverFactory::buildFromArray($this->tester->getConnectionConfig())))->table('kw_language')->drop();
+        (new TextFactory())->initTexts(['type' => 'database', 'connection' => $this->tester->getConnectionConfig()], ['ru']);
     }
 }

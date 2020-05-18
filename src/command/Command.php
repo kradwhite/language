@@ -41,7 +41,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
                 $output->writeln("<fg=red>Файла '$target' не существует");
             } else {
                 $config = new Config(require $target);
-                $this->app = $target ? new Lang($config, $input->getOption('locale')) : null;
+                $this->app = $target ? new Lang($config) : null;
             }
         }
         return $this->app;
@@ -70,18 +70,21 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      * @throws LangException
      * @throws DbException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->doExecute($input, $output);
-            $output->writeln("<fg=green>Успешно выполнено</>");
+            if (!$result = $this->doExecute($input, $output)) {
+                $output->writeln("<fg=green>Успешно выполнено</>");
+            }
+            return $result;
         } catch (LangException|DbException $e) {
             $output->writeln("<fg=red>{$e->getMessage()}</>");
         }
+        return 1;
     }
 
     /**
@@ -90,9 +93,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     protected function configure()
     {
         $this->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
-            'Путь хранения файла конфигурации языка')
-            ->addOption('locale', 'l', InputOption::VALUE_REQUIRED,
-                'Локализация, ru, en и т.д.', 'ru');
+            'Путь хранения файла конфигурации языка', '.');
     }
 
     /**

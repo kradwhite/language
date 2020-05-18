@@ -79,11 +79,11 @@ class SqlTextRepository implements TextRepository
     public function createTable(string $name, array $columns, array $locales)
     {
         $database = $this->config['connection']['dbName'];
-        if (!isset($config['textLimit'])) {
-            $config['textLimit'] = 256;
+        if (!isset($this->config['textLimit'])) {
+            $this->config['textLimit'] = 256;
         }
-        if (!isset($config['paramsLimit'])) {
-            $config['paramsLimit'] = 256;
+        if (!isset($this->config['paramsLimit'])) {
+            $this->config['paramsLimit'] = 256;
         }
         if (!in_array($name, $this->conn->meta()->tables($database))) {
             $this->conn->table($name)
@@ -92,7 +92,7 @@ class SqlTextRepository implements TextRepository
                 ->addColumn($columns['name'], 'string', ['limit' => 64, 'null' => false])
                 ->addColumn($columns['text'], 'string', ['limit' => $this->config['textLimit'], 'null' => false])
                 ->addColumn($columns['params'], 'string', ['limit' => $this->config['paramsLimit'], 'null' => false, 'default' => json_encode([])])
-                ->addIndex(['locale', 'id', 'name'], ['unique' => true])
+                ->addIndex([$columns['locale'], $columns['name'], $columns['id']], ['unique' => true])
                 ->create();
         }
     }

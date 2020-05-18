@@ -1,0 +1,7 @@
+actor: CommandTester
+modules:
+    enabled:
+        - \Helper\Command
+        - Cli
+        - Asserts
+        - Filesystem

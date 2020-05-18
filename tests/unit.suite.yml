@@ -15,5 +15,4 @@ modules:
         populate: true
         dump: 'tests/_data/postgre.sql'
     - Filesystem
-    - Cli
   step_decorators: ~

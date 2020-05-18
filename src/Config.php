@@ -11,6 +11,10 @@ namespace kradwhite\language;
 
 use kradwhite\language\text\TextFactory;
 
+/**
+ * Class Config
+ * @package kradwhite\language
+ */
 class Config
 {
     /** @var string */
@@ -108,7 +112,7 @@ class Config
     /**
      * @return string
      */
-    public function locale(): string
+    public function defaultLocale(): string
     {
         return $this->config['locales'][0];
     }

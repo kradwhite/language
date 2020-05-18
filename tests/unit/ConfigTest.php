@@ -73,7 +73,7 @@ class ConfigTest extends \Codeception\Test\Unit
 
     public function testCreateFailNotDirectory()
     {
-        $path = __DIR__ . '/../_data/language.php';
+        $path = __DIR__ . '/../_data/config/language.php';
         $this->tester->expectThrowable(new LangException("'$path' не является директорией"), function () use ($path) {
             (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($path);
         });
@@ -81,15 +81,7 @@ class ConfigTest extends \Codeception\Test\Unit
 
     public function testCreateFailAlreadyExist()
     {
-        $path = __DIR__ . '/../_data';
-        $this->tester->expectThrowable(new LangException("Файл конфигурации '$path/language.php' уже существует"), function () use ($path) {
-            (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($path);
-        });
-    }
-
-    public function testCreateFailSourceNotFound()
-    {
-        $path = __DIR__ . '/../_data';
+        $path = __DIR__ . '/../_data/config';
         $this->tester->expectThrowable(new LangException("Файл конфигурации '$path/language.php' уже существует"), function () use ($path) {
             (new Config(['texts' => [['names' => ['one']], ['names' => ['two']]]]))->create($path);
         });

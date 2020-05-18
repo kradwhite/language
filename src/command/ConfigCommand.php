@@ -41,5 +41,15 @@ class ConfigCommand extends Command
         if ($app = $this->buildApp($input, $output)) {
             $app->config()->create($input->getOption('path'));
         }
+        return (int)!$app;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @return string
+     */
+    protected function getConfigFileName(InputInterface $input): string
+    {
+        return __DIR__ . '/../language.php';
     }
 }

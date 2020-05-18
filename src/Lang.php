@@ -41,7 +41,7 @@ class Lang
             $localesStr = implode('|', $config->locales());
             throw new LangException("Неизвестный язык '$locale'. Допустимые значения [$localesStr]");
         }
-        $this->locale = $locale ? $locale : $config->locale();
+        $this->locale = $locale ? $locale : $config->defaultLocale();
         $this->texts = $config->factory()->buildTexts($config);
     }
 
