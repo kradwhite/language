@@ -25,7 +25,7 @@ class InitCommandTest extends \Codeception\Test\Unit
         if(file_exists("$cd/language")){
             $this->tester->deleteDir("$cd/language");
         }
-        $this->tester->runShellCommand('php index.php init');
+        $this->tester->runShellCommand('php lang init');
         $this->assertDirectoryExists("$cd/language");
         $this->assertDirectoryExists("$cd/language/ru");
         $this->assertFileExists("$cd/language/ru/errors.php");

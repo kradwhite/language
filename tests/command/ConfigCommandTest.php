@@ -25,7 +25,7 @@ class ConfigCommandTest extends \Codeception\Test\Unit
         if(file_exists("$cd/../tests/_data/language.php")){
             $this->tester->deleteFile("$cd/../tests/_data/language.php");
         }
-        $this->tester->runShellCommand('php index.php config -p ../tests/_data');
+        $this->tester->runShellCommand('php lang config -p ../tests/_data');
         $this->assertFileExists("$cd/../tests/_data/language.php");
         $this->tester->deleteFile("$cd/../tests/_data/language.php");
     }
