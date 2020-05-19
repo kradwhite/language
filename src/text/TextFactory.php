@@ -134,7 +134,7 @@ class TextFactory
             foreach ($config['names'] as $name) {
                 $filename = $localePath . DIRECTORY_SEPARATOR . "$name.php";
                 if (!file_exists($filename)) {
-                    if (!file_put_contents($filename, "<?php\n\nreturn [\n\t'error' => 'message',\n];\n")) {
+                    if (!file_put_contents($filename, "<?php\n\nreturn [\n\t'error' => ['message'],\n];\n")) {
                         throw new LangException("Ошибка создания файла '$filename'");
                     }
                     chmod($filename, 0664);
