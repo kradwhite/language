@@ -34,12 +34,14 @@
     "autoload": {
         "psr-4": {
             "kradwhite\\language\\": "src"
-        }
+        },
+        "classmap": ["src"]
     },
     "autoload-dev": {
         "psr-4": {
             "kradwhite\\tests\\": "tests"
-        }
+        },
+        "classmap": ["tests"]
     },
     "scripts": {
         "test": "./codecept run unit"
@@ -52,5 +54,7 @@
     "config": {
         "sort-packages": true
     },
-    "bin": ["src/lang"]
+    "bin": [
+      "lang"
+    ]
 }
