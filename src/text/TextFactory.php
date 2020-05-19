@@ -126,7 +126,7 @@ class TextFactory
         }
         foreach ($locales as $locale) {
             $localePath = $config['directory'] . DIRECTORY_SEPARATOR . $locale;
-            if (!file_exists($locale)) {
+            if (!file_exists($localePath)) {
                 if (!mkdir($localePath, 0775)) {
                     throw new LangException("Ошибка создания директории '$localePath'");
                 }
