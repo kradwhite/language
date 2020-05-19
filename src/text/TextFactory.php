@@ -121,13 +121,13 @@ class TextFactory
     {
         if (!isset($config['directory'])) {
             throw new LangException("Для ресурсов типа '{$config['type']}' требуется имя директории 'directory' => 'path'");
-        } else if (!file_exists($config['directory']) && !mkdir($config['directory'], 0664)) {
+        } else if (!file_exists($config['directory']) && !mkdir($config['directory'], 0775)) {
             throw new LangException("Ошибка создания директории '{$config['directory']}'");
         }
         foreach ($locales as $locale) {
             $localePath = $config['directory'] . DIRECTORY_SEPARATOR . $locale;
             if (!file_exists($locale)) {
-                if (!mkdir($localePath, 0664)) {
+                if (!mkdir($localePath, 0775)) {
                     throw new LangException("Ошибка создания директории '$localePath'");
                 }
             }
