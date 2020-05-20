@@ -15,6 +15,7 @@ use kradwhite\db\exception\BeforeQueryException;
 use kradwhite\db\exception\DbException;
 use kradwhite\db\exception\PdoException;
 use kradwhite\db\exception\PdoStatementException;
+use kradwhite\language\LangException;
 
 /**
  * Class SqlTextRepository
@@ -25,26 +26,19 @@ class SqlTextRepository implements TextRepository
     /** @var Connection */
     private Connection $conn;
 
-    /** @var array */
-    private array $config;
+    /** @var DbConfig */
+    private DbConfig $config;
 
     /**
      * SqlTextRepository constructor.
-     * @param array $config
+     * @param DbConfig $config
+     * @throws LangException
      * @throws BeforeQueryException
      */
-    public function __construct(array &$config)
+    public function __construct(DbConfig $config)
     {
-        if (!isset($config['table']) || !$config['table']) {
-            $config['table'] = 'kw_language';
-        }
-        if (!isset($config['columns']) || !$config['columns']) {
-            $config['columns'] = [];
-        }
-        $columns = ['id' => 'id', 'locale' => 'locale', 'params' => 'params', 'name' => 'name', 'text' => 'text'];
-        $config['columns'] = array_merge($config['columns'], $columns);
+        $this->conn = new Connection(DriverFactory::buildFromArray($config->connection()));
         $this->config = $config;
-        $this->conn = new Connection(DriverFactory::buildFromArray($config['connection']));
     }
 
     /**
@@ -58,9 +52,9 @@ class SqlTextRepository implements TextRepository
      */
     public function loadPhrase(string $locale, string $name, string $id): array
     {
-        $cs = &$this->config['columns'];
+        $cs = $this->config->columns();
         $filter = [$cs['id'] => $id, $cs['locale'] => $locale, $cs['name'] => $name];
-        if ($text = $this->conn->selectOne($this->config['table'], [$cs['text'], $cs['params']], $filter)
+        if ($text = $this->conn->selectOne($this->config->table(), [$cs['text'], $cs['params']], $filter)
             ->prepareExecute('num')) {
             $text[1] = json_decode($text[1], true);
         }
@@ -71,27 +65,21 @@ class SqlTextRepository implements TextRepository
      * @param string $name
      * @param array $columns
      * @param array $locales
-     * @return bool|void
+     * @return void
      * @throws BeforeQueryException
      * @throws PdoException
      * @throws DbException
+     * @throws LangException
      */
     public function createTable(string $name, array $columns, array $locales)
     {
-        $database = $this->config['connection']['dbName'];
-        if (!isset($this->config['textLimit'])) {
-            $this->config['textLimit'] = 256;
-        }
-        if (!isset($this->config['paramsLimit'])) {
-            $this->config['paramsLimit'] = 256;
-        }
-        if (!in_array($name, $this->conn->meta()->tables($database))) {
+        if (!in_array($name, $this->conn->meta()->tables($this->config->connection()['dbName']))) {
             $this->conn->table($name)
                 ->addColumn($columns['id'], 'string', ['limit' => 64, 'null' => false])
                 ->addColumn($columns['locale'], 'string', ['limit' => 5, 'null' => false])
                 ->addColumn($columns['name'], 'string', ['limit' => 64, 'null' => false])
-                ->addColumn($columns['text'], 'string', ['limit' => $this->config['textLimit'], 'null' => false])
-                ->addColumn($columns['params'], 'string', ['limit' => $this->config['paramsLimit'], 'null' => false, 'default' => json_encode([])])
+                ->addColumn($columns['text'], 'string', ['limit' => $this->config->textLimit(), 'null' => false])
+                ->addColumn($columns['params'], 'string', ['limit' => $this->config->paramsLimit(), 'null' => false, 'default' => json_encode([])])
                 ->addIndex([$columns['locale'], $columns['name'], $columns['id']], ['unique' => true])
                 ->create();
         }

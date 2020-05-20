@@ -9,8 +9,9 @@ declare (strict_types=1);
 
 namespace kradwhite\language;
 
-use kradwhite\db\exception\BeforeQueryException;
+use kradwhite\db\exception\DbException;
 use kradwhite\language\text\Text;
+use kradwhite\language\text\TextFactory;
 use kradwhite\language\text\Texts;
 
 /**
@@ -20,40 +21,45 @@ use kradwhite\language\text\Texts;
 class Lang
 {
     /** @var string */
+    const Name = 'language.php';
+
+    /** @var string */
     private string $locale;
 
-    /** @var Texts */
-    private ?Texts $texts;
+    /** @var Texts[] */
+    private array $texts = [];
 
-    /** @var Config */
-    private ?Config $config;
+    /** @var array */
+    private array $config;
 
     /**
      * Lang constructor.
-     * @param Config $config
+     * @param array $config
      * @param string $locale
      * @throws LangException
      */
-    public function __construct(Config $config, string $locale = 'ru')
+    public function __construct(array $config, string $locale = 'ru')
     {
         $this->config = $config;
-        if ($locale && !$config->existLocale($locale)) {
-            $localesStr = implode('|', $config->locales());
-            throw new LangException("Неизвестный язык '$locale'. Допустимые значения [$localesStr]");
+        if (!isset($this->config['locales'])) {
+            $this->config['locales'] = ['ru'];
         }
-        $this->locale = $locale ? $locale : $config->defaultLocale();
-        $this->texts = $config->factory()->buildTexts($config);
+        if (!isset($this->config['default'])) {
+            $this->config['default'] = 'default';
+        }
+        $this->locale = $locale ? $locale : $this->config['locales'][0];
+        $this->initTexts();
     }
 
     /**
      * @param string $name
      * @return Text
      * @throws LangException
-     * @throws BeforeQueryException
+     * @throws DbException
      */
     public function text(string $name = ''): Text
     {
-        return $this->texts->getText($this->locale, $name);
+        return $this->getTextsByName($name)->getText($this->locale, $name);
     }
 
     /**
@@ -62,11 +68,11 @@ class Lang
      * @param array $params
      * @return string
      * @throws LangException
-     * @throws BeforeQueryException
+     * @throws DbException
      */
     public function phrase(string $name, string $id, array $params = []): string
     {
-        return $this->texts->getText($this->locale, $name)->phrase($id, $params);
+        return $this->getTextsByName($name)->getText($this->locale, $name)->phrase($id, $params);
     }
 
     /**
@@ -78,10 +84,88 @@ class Lang
     }
 
     /**
-     * @return Config
+     * @param string $path
+     * @return void
+     * @throws LangException
      */
-    public function config(): Config
+    public function initConfig(string $path)
     {
-        return $this->config;
+        $source = __DIR__ . DIRECTORY_SEPARATOR . self::Name;
+        $target = $path . DIRECTORY_SEPARATOR . self::Name;
+        if (!file_exists($path)) {
+            throw new LangException("Директория '$path' не существует");
+        } else if (!is_dir($path)) {
+            throw new LangException("'$path' не является директорией");
+        } else if (file_exists($target)) {
+            throw new LangException("Файл конфигурации '$target' уже существует");
+        } else if (!file_exists($source)) {
+            throw new LangException("Исходный файл конфигурации языков не найден '$source'");
+        } else if (!copy($source, $target)) {
+            throw new LangException("Ошибка копирования файла конфигурации '$target'");
+        }
+    }
+
+    /**
+     * @return void
+     * @throws DbException
+     * @throws LangException
+     */
+    public function createTexts()
+    {
+        foreach ($this->texts as &$texts) {
+            $texts->create($this->config['locales']);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function names(): array
+    {
+        $result = [];
+        foreach ($this->texts as $texts) {
+            $result = array_merge($result, $texts->getNames());
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    private function getName(string $name): string
+    {
+        return $name ? $name : $this->config['default'];
+    }
+
+    /**
+     * @param string $name
+     * @return Texts
+     * @throws LangException
+     */
+    private function getTextsByName(string $name): Texts
+    {
+        $name = $this->getName($name);
+        foreach ($this->texts as $texts) {
+            if ($texts->existName($name)) {
+                return $texts;
+            }
+        }
+        throw new LangException("Набор фраз с именем '$name' не найден");
+    }
+
+    /**
+     * @return void
+     * @throws LangException
+     */
+    private function initTexts()
+    {
+        if (!isset($this->config['factory'])) {
+            $this->config['factory'] = TextFactory::class;
+        } else if (!is_a($this->config['factory'], TextFactory::class, true)) {
+            throw new LangException("Класс фабрики '{$this->config['factory']}' должен наследовать " . TextFactory::class);
+        }
+        $factory = new $this->config['factory']();
+        $this->texts = $factory->buildTexts($this->config);
     }
 }

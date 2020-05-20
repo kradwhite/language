@@ -17,9 +17,9 @@ interface TextRepository
 {
     /**
      * TextRepository constructor.
-     * @param array $config
+     * @param DbConfig $config
      */
-    public function __construct(array &$config);
+    public function __construct(DbConfig $config);
 
     /**
      * @param string $locale

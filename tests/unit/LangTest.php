@@ -2,7 +2,7 @@
 
 namespace kradwhite\tests\unit;
 
-use kradwhite\language\Config;
+use kradwhite\language\text\DbConfig;
 use kradwhite\language\text\FileText;
 use kradwhite\language\Lang;
 use kradwhite\language\text\Text;
@@ -25,22 +25,15 @@ class LangTest extends \Codeception\Test\Unit
     }
 
     // tests
-    public function testText()
+    public function testInit()
     {
-        $text = $this->make(Text::class);
-        $config = $this->make(Config::class,
-            ['factory' => $this->make(TextFactory::class,
-                ['buildTexts' => $this->make(Texts::class, ['getText' => $text])]), 'existLocale' => true, 'locale' => 'ru']);
-        $app = new Lang($config);
-        $result = $app->text();
-        $this->assertEquals($text, $result);
+        $config = ['texts' => []];
+        new Lang($config);
     }
 
     public function testLocale()
     {
-        $config = $this->make(Config::class,
-            ['factory' => $this->make(TextFactory::class,
-                ['buildTexts' => $this->make(Texts::class)]), 'existLocale' => true, 'locale' => 'ru']);
+        $config = ['texts' => []];
         $app = new Lang($config);
         $result = $app->locale();
         $this->assertEquals('ru', $result);

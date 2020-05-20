@@ -40,8 +40,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             } else if (!file_exists($target)) {
                 $output->writeln("<fg=red>Файла '$target' не существует");
             } else {
-                $config = new Config(require $target);
-                $this->app = $target ? new Lang($config) : null;
+                $this->app = $target ? new Lang(require_once $target) : null;
             }
         }
         return $this->app;
@@ -64,7 +63,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
         if ($path[strlen($path) - 1] != DIRECTORY_SEPARATOR) {
             $path .= DIRECTORY_SEPARATOR;
         }
-        return $path . Config::Name;
+        return $path . Lang::Name;
     }
 
     /**

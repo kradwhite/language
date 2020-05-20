@@ -1,9 +1,11 @@
 <?php
 /**
+ * Date: 20.05.2020
+ * Time: 20:30
  * Author: Artem Aleksandrov
- * Date: 16.05.2020
- * Time: 11:22
  */
+
+declare (strict_types=1);
 
 namespace kradwhite\language\command;
 
@@ -12,13 +14,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ConfigCommand
- * @package kradwhite\language
+ * Class NamesCommand
+ * @package kradwhite\language\command
  */
-class ConfigCommand extends Command
+class NamesCommand extends Command
 {
     /** @var string */
-    protected static $defaultName = 'config';
+    protected static $defaultName = 'names';
 
     /**
      * @return void
@@ -26,8 +28,8 @@ class ConfigCommand extends Command
     protected function configure(): void
     {
         parent::configure();
-        $this->setDescription('Создание файла конфигурации языка')
-            ->setHelp('Создаёт файл конфигурации языка');
+        $this->setDescription('Вывод имён текстов со всех конфигураций')
+            ->setHelp('Выводит имёна текстов со всех конфигураций');
     }
 
     /**
@@ -39,17 +41,10 @@ class ConfigCommand extends Command
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
         if ($app = $this->buildApp($input, $output)) {
-            $app->initConfig($input->getOption('path'));
+            foreach ($app->names() as $name) {
+                $output->writeln($name);
+            }
         }
         return (int)!$app;
-    }
-
-    /**
-     * @param InputInterface $input
-     * @return string
-     */
-    protected function getConfigFileName(InputInterface $input): string
-    {
-        return __DIR__ . '/../language.php';
     }
 }

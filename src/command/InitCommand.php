@@ -8,6 +8,7 @@
 namespace kradwhite\language\command;
 
 
+use kradwhite\db\exception\DbException;
 use kradwhite\language\LangException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,13 +35,14 @@ class InitCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return mixed|void
+     * @return int
      * @throws LangException
+     * @throws DbException
      */
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
         if ($app = $this->buildApp($input, $output)) {
-            $app->config()->init();
+            $app->createTexts();
         }
         return (int)!$app;
     }
