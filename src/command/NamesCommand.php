@@ -41,6 +41,7 @@ class NamesCommand extends Command
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
         if ($app = $this->buildApp($input, $output)) {
+            $output->writeln("Имена всех конфигурация языка:");
             foreach ($app->names() as $name) {
                 $output->writeln($name);
             }

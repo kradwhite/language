@@ -68,14 +68,14 @@ class LangTest extends \Codeception\Test\Unit
         $this->assertInstanceOf(FileText::class, $result);
     }
 
-    public function testCreateFailDirectoryNotExist()
+    public function testInitConfigFailDirectoryNotExist()
     {
         $this->tester->expectThrowable(new LangException("Директория 'path/not/exist' не существует"), function () {
             (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig('path/not/exist');
         });
     }
 
-    public function testCreateFailNotDirectory()
+    public function testInitConfigFailNotDirectory()
     {
         $path = __DIR__ . '/../_data/config/language.php';
         $this->tester->expectThrowable(new LangException("'$path' не является директорией"), function () use ($path) {
@@ -83,7 +83,7 @@ class LangTest extends \Codeception\Test\Unit
         });
     }
 
-    public function testCreateFailAlreadyExist()
+    public function testInitConfigFailAlreadyExist()
     {
         $path = __DIR__ . '/../_data/config';
         $pwd = getcwd();
@@ -95,7 +95,7 @@ class LangTest extends \Codeception\Test\Unit
         });
     }
 
-    public function testCreateSuccess()
+    public function testInitConfigSuccess()
     {
         $this->tester->amInPath('tests/_data');
         $pwd = getcwd();
@@ -106,8 +106,19 @@ class LangTest extends \Codeception\Test\Unit
         $this->assertFileExists($pwd . '/config/language.php');
     }
 
-    public function testCreate()
+    public function testNames()
     {
-        $this->fail("not implement");
+        $config = [
+            'texts' => [
+                [
+                    'names' => ['errors'],
+                    'type' => 'php',
+                    'directory' => __DIR__ . '/../_data',
+                ]
+            ]
+        ];
+        $app = new Lang($config);
+        $result = $app->names();
+        $this->assertEquals(['errors'], $result);
     }
 }

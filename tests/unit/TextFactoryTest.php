@@ -2,10 +2,13 @@
 
 namespace kradwhite\tests\unit;
 
-use kradwhite\db\Connection;
-use kradwhite\db\driver\DriverFactory;
 use kradwhite\language\Config;
 use kradwhite\language\LangException;
+use kradwhite\language\text\DbText;
+use kradwhite\language\text\DbTexts;
+use kradwhite\language\text\FileText;
+use kradwhite\language\text\FileTexts;
+use kradwhite\language\text\SqlTextRepository;
 use kradwhite\language\text\TextFactory;
 use kradwhite\language\text\TextRepository;
 use kradwhite\language\text\Texts;
@@ -25,106 +28,66 @@ class TextFactoryTest extends \Codeception\Test\Unit
     {
     }
 
-    // tests
-    public function testBuildTexts()
+    public function testBuildFileText()
     {
-        $texts = (new TextFactory())->buildTexts($this->make(Config::class));
-        $this->assertInstanceOf(Texts::class, $texts);
+        $text = (new TextFactory())->buildFileText('ru', 'name', []);
+        $this->assertInstanceOf(FileText::class, $text);
     }
 
-    public function testBuildTextWrongType()
+    public function testBuildDbText()
     {
-        $this->tester->expectThrowable(new LangException("Неизвестный тип 'wrong' ресурсов"), function () {
-            (new TextFactory())->buildText(['type' => 'wrong'], 'ru', 'name');
-        });
+        $text = (new TextFactory())->buildDbText('ru', 'name', $this->make(SqlTextRepository::class));
+        $this->assertInstanceOf(DbText::class, $text);
     }
 
     public function testBuildFileTextNotFoundDirectory()
     {
         $this->tester->expectThrowable(new LangException("Для ресурсов типа 'php' требуется имя директории 'directory' => 'path'"), function () {
-            (new TextFactory())->buildText(['type' => 'php'], 'ru', 'name');
-        });
-    }
-
-    public function testBuildFileTextNotFoundFile()
-    {
-        $filename = __DIR__ . '/../_data';
-        $this->tester->expectThrowable(new LangException("Файл '$filename/ru/name.php' не существует"), function () use ($filename) {
-            (new TextFactory())->buildText(['type' => 'php', 'directory' => $filename], 'ru', 'name');
+            (new TextFactory())->buildFileTexts(['type' => 'php']);
         });
     }
 
     public function testBuildFileTextSuccess()
     {
         $filename = __DIR__ . '/../_data';
-        $text = (new TextFactory())->buildText(['type' => 'php', 'directory' => $filename], 'ru', 'errors');
-        $message = $text->phrase('update-error', ['variable']);
-        $this->assertEquals('error message: variable', $message);
-    }
-
-    public function testBuildDbTextNotFoundConnection()
-    {
-        $this->tester->expectThrowable(new LangException("Для ресурсов типа 'database' требуется конфигурация 'connection' => []"), function () {
-            (new TextFactory())->buildText(['type' => 'database'], 'ru', 'name');
-        });
-    }
-
-    public function testBuildDbTextWrongRepositoryClass()
-    {
-        $this->tester->expectThrowable(new LangException("Класс репозитория 'class' должен реализовывать интерфейс '" . TextRepository::class . "'"), function () {
-            (new TextFactory())->buildText(['type' => 'database', 'repository' => 'class', 'connection' => []], 'ru', 'name');
-        });
+        $texts = (new TextFactory())->buildFileTexts(['type' => 'php', 'directory' => $filename, 'names' => []]);
+        $this->assertInstanceOf(FileTexts::class, $texts);
     }
 
     public function testBuildDbTextSuccess()
     {
         $connection = $this->tester->getConnectionConfig();
-        $text = (new TextFactory())->buildText(['type' => 'database', 'connection' => $connection], 'ru', 'errors');
-        $message = $text->phrase('update-error', ['variable']);
-        $this->assertEquals('error message: variable', $message);
+        $text = (new TextFactory())->buildDbTexts(['type' => 'database', 'connection' => $connection, 'names' => []]);
+        $this->assertInstanceOf(DbTexts::class, $text);
     }
 
-    public function testInitTextsFileDirectoryNotFound()
+    // tests
+    public function testBuildTextsFailTextsArrayNotFound()
     {
-        $this->tester->expectThrowable(new LangException("Для ресурсов типа 'php' требуется имя директории 'directory' => 'path'"), function () {
-            (new TextFactory())->initTexts(['type' => 'php'], ['ru']);
+        $this->tester->expectThrowable(new LangException("Конфигурация языков должна содержать массив 'texts' => []"), function () {
+            (new TextFactory())->buildTexts([]);
         });
     }
 
-    public function testInitTextsFileSuccess()
+    public function testBuildTextsFailNamesArrayNotFound()
     {
-        $this->tester->amInPath('tests/_data');
-        $path = getcwd();
-        if (file_exists("$path/en")) {
-            $this->tester->deleteDir("$path/en");
-        }
-        if (file_exists("$path/ru/test1.php")) {
-            $this->tester->deleteFile("$path/ru/test1.php");
-        }
-        if (file_exists("$path/ru/test2.php")) {
-            $this->tester->deleteFile("$path/ru/test2.php");
-        }
-        (new TextFactory())->initTexts(['type' => 'php', 'names' => ['test1', 'test2'], 'directory' => $path], ['ru', 'en']);
-        $this->assertDirectoryExists("$path/en");
-        $this->assertFileExists("$path/en/test1.php");
-        $this->assertFileExists("$path/en/test2.php");
-        $this->assertFileExists("$path/ru/test1.php");
-        $this->assertFileExists("$path/ru/test2.php");
-        chmod("$path/en", 0777);
-        chmod("$path/en/test1.php", 0666);
-        chmod("$path/en/test2.php", 0666);
-        chmod("$path/ru/test1.php", 0666);
-        chmod("$path/ru/test2.php", 0666);
+        $this->tester->expectThrowable(new LangException("Конфигурация языка должна содержать массив имён текстов 'names' => []"), function () {
+            (new TextFactory())->buildTexts(['texts' => [[]]]);
+        });
     }
 
-    public function testInitTextsDbExistTable()
+    public function testBuildTextsFailWrongType()
     {
-        (new TextFactory())->initTexts(['type' => 'database', 'connection' => $this->tester->getConnectionConfig()], ['ru']);
+        $this->tester->expectThrowable(new LangException("Неизвестный тип 'wrong' ресурсов"), function () {
+            (new TextFactory())->buildTexts(['texts' => [['type' => 'wrong', 'names' => []]]]);
+        });
     }
 
-    public function testInitTextsDbNotExistTable()
+    public function testBuildTextsSuccess()
     {
-        (new Connection(DriverFactory::buildFromArray($this->tester->getConnectionConfig())))->table('kw_language')->drop();
-        (new TextFactory())->initTexts(['type' => 'database', 'connection' => $this->tester->getConnectionConfig()], ['ru']);
+        $texts = (new TextFactory())->buildTexts(['texts' => [['type' => 'php', 'names' => [], 'directory' => 'path']]]);
+        $this->assertIsArray($texts);
+        $this->assertCount(1, $texts);
+        $this->assertInstanceOf(FileTexts::class, $texts[0]);
     }
 }
