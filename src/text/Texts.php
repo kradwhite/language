@@ -76,6 +76,13 @@ abstract class Texts
     }
 
     /**
+     * @param array $locales
+     * @throws LangException
+     * @throws DbException
+     */
+    abstract public function create(array $locales);
+
+    /**
      * @return TextFactory
      */
     protected function getFactory(): TextFactory
@@ -90,13 +97,6 @@ abstract class Texts
     {
         return $this->type;
     }
-
-    /**
-     * @param array $locales
-     * @throws LangException
-     * @throws DbException
-     */
-    abstract public function create(array $locales);
 
     /**
      * @param string $locale

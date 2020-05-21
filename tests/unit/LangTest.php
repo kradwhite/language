@@ -2,12 +2,9 @@
 
 namespace kradwhite\tests\unit;
 
-use kradwhite\language\text\DbConfig;
-use kradwhite\language\text\FileText;
 use kradwhite\language\Lang;
-use kradwhite\language\text\Text;
-use kradwhite\language\text\TextFactory;
-use kradwhite\language\text\Texts;
+use kradwhite\language\LangException;
+use kradwhite\language\text\FileText;
 
 class LangTest extends \Codeception\Test\Unit
 {
@@ -41,12 +38,76 @@ class LangTest extends \Codeception\Test\Unit
 
     public function testPhrase()
     {
-        $text = $this->make(FileText::class, ['phrase' => 'message']);
-        $config = $this->make(Config::class,
-            ['factory' => $this->make(TextFactory::class,
-                ['buildTexts' => $this->make(Texts::class, ['getText' => $text])]), 'existLocale' => true, 'locale' => 'ru']);
+        $config = [
+            'texts' => [
+                [
+                    'names' => ['errors'],
+                    'type' => 'php',
+                    'directory' => __DIR__ . '/../_data',
+                ]
+            ]
+        ];
         $app = new Lang($config);
-        $result = $app->phrase('name', 'id');
-        $this->assertEquals('message', $result);
+        $result = $app->phrase('errors', 'update-error', ['test']);
+        $this->assertEquals('error message: test', $result);
+    }
+
+    public function testText()
+    {
+        $config = [
+            'texts' => [
+                [
+                    'names' => ['errors'],
+                    'type' => 'php',
+                    'directory' => __DIR__ . '/../_data',
+                ]
+            ]
+        ];
+        $app = new Lang($config);
+        $result = $app->text('errors');
+        $this->assertInstanceOf(FileText::class, $result);
+    }
+
+    public function testCreateFailDirectoryNotExist()
+    {
+        $this->tester->expectThrowable(new LangException("Директория 'path/not/exist' не существует"), function () {
+            (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig('path/not/exist');
+        });
+    }
+
+    public function testCreateFailNotDirectory()
+    {
+        $path = __DIR__ . '/../_data/config/language.php';
+        $this->tester->expectThrowable(new LangException("'$path' не является директорией"), function () use ($path) {
+            (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig($path);
+        });
+    }
+
+    public function testCreateFailAlreadyExist()
+    {
+        $path = __DIR__ . '/../_data/config';
+        $pwd = getcwd();
+        if (!file_exists("$pwd/tests/_data/config/language.php")) {
+            file_put_contents("$pwd/tests/_data/config/language.php", '<?php');
+        }
+        $this->tester->expectThrowable(new LangException("Файл конфигурации '$path/language.php' уже существует"), function () use ($path) {
+            (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig($path);
+        });
+    }
+
+    public function testCreateSuccess()
+    {
+        $this->tester->amInPath('tests/_data');
+        $pwd = getcwd();
+        if (file_exists("$pwd/config/language.php")) {
+            $this->tester->deleteFile("$pwd/config/language.php", '<?php');
+        }
+        (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig($pwd . '/config');
+        $this->assertFileExists($pwd . '/config/language.php');
+    }
+
+    public function testCreate()
+    {
+        $this->fail("not implement");
     }
 }

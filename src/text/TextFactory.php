@@ -23,7 +23,7 @@ class TextFactory
      * @param array $texts
      * @return FileText
      */
-    public function buildFileText(string $locale, string $name, array &$texts): FileText
+    public function buildFileText(string $locale, string $name, array $texts): FileText
     {
         return new FileText($locale, $name, $texts);
     }
@@ -53,12 +53,12 @@ class TextFactory
         foreach ($config['texts'] as $textConfig) {
             if (!isset($textConfig['names'])) {
                 throw new LangException("Конфигурация языка должна содержать массив имён текстов 'names' => []");
-            } else if (in_array($config['type'], ['php'])) {
-                $result[] = $this->buildFileTexts($config);
-            } else if ($config['type'] == 'database') {
-                $result[] = $this->buildDbTexts($config);
+            } else if (in_array($textConfig['type'], ['php'])) {
+                $result[] = $this->buildFileTexts($textConfig);
+            } else if ($textConfig['type'] == 'database') {
+                $result[] = $this->buildDbTexts($textConfig);
             } else {
-                throw new LangException("Неизвестный тип '{$config['type']}' ресурсов");
+                throw new LangException("Неизвестный тип '{$textConfig['type']}' ресурсов");
             }
         }
         return $result;

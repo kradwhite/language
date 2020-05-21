@@ -50,7 +50,6 @@ class FileTexts extends Texts
     }
 
     /**
-     * @param string $path
      * @param array $locales
      * @return void
      * @throws LangException

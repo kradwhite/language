@@ -59,7 +59,7 @@ class Lang
      */
     public function text(string $name = ''): Text
     {
-        return $this->getTextsByName($name)->getText($this->locale, $name);
+        return $this->getTextByName($name);
     }
 
     /**
@@ -72,7 +72,7 @@ class Lang
      */
     public function phrase(string $name, string $id, array $params = []): string
     {
-        return $this->getTextsByName($name)->getText($this->locale, $name)->phrase($id, $params);
+        return $this->getTextByName($name)->phrase($id, $params);
     }
 
     /**
@@ -112,7 +112,7 @@ class Lang
      */
     public function createTexts()
     {
-        foreach ($this->texts as &$texts) {
+        foreach ($this->texts as $texts) {
             $texts->create($this->config['locales']);
         }
     }
@@ -131,24 +131,16 @@ class Lang
 
     /**
      * @param string $name
-     * @return string
-     */
-    private function getName(string $name): string
-    {
-        return $name ? $name : $this->config['default'];
-    }
-
-    /**
-     * @param string $name
-     * @return Texts
+     * @return Text
      * @throws LangException
+     * @throws DbException
      */
-    private function getTextsByName(string $name): Texts
+    private function getTextByName(string $name): Text
     {
-        $name = $this->getName($name);
+        $name = $name ? $name : $this->config['default'];
         foreach ($this->texts as $texts) {
             if ($texts->existName($name)) {
-                return $texts;
+                return $texts->getText($this->locale, $name);
             }
         }
         throw new LangException("Набор фраз с именем '$name' не найден");
