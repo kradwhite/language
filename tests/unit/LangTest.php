@@ -21,13 +21,6 @@ class LangTest extends \Codeception\Test\Unit
     {
     }
 
-    // tests
-    public function testInit()
-    {
-        $config = ['texts' => []];
-        new Lang($config);
-    }
-
     public function testLocale()
     {
         $config = ['texts' => []];
@@ -120,5 +113,18 @@ class LangTest extends \Codeception\Test\Unit
         $app = new Lang($config);
         $result = $app->names();
         $this->assertEquals(['errors'], $result);
+    }
+
+    public function testInitFailFileNotFound()
+    {
+        $this->tester->expectThrowable(new LangException("Файл с конфигурацией 'file.php' не найден"), function () {
+            Lang::init('file.php');
+        });
+    }
+
+    public function testInitSuccess()
+    {
+        $lang = Lang::init(__DIR__ . '/../_data/config/language.php');
+        $this->assertInstanceOf(Lang::class, $lang);
     }
 }

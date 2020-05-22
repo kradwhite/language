@@ -52,6 +52,20 @@ class Lang
     }
 
     /**
+     * @param string $configFilename
+     * @param string $locale
+     * @return Lang
+     * @throws LangException
+     */
+    public static function init(string $configFilename, string $locale = 'ru'): Lang
+    {
+        if (!file_exists($configFilename)) {
+            throw new LangException("Файл с конфигурацией '$configFilename' не найден");
+        }
+        return new Lang(require $configFilename, $locale);
+    }
+
+    /**
      * @param string $name
      * @return Text
      * @throws LangException
