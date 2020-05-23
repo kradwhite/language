@@ -51,7 +51,7 @@ abstract class Text
             throw new LangException("В языке '{$this->locale}' в тексте '{$this->name}' не найдена фраза с идентификатором '$id'");
         }
         if (!is_array($this->texts[$id])) {
-            $this->texts[$id][0] = $this->texts[$id];
+            $this->texts[$id][] = $this->texts[$id];
         }
         if (isset($this->texts[$id][1])) {
             $params = array_merge($this->texts[$id][1], $params);
