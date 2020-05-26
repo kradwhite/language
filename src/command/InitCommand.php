@@ -10,6 +10,7 @@ namespace kradwhite\language\command;
 
 use kradwhite\db\exception\DbException;
 use kradwhite\language\LangException;
+use kradwhite\language\LocalLang;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -28,8 +29,8 @@ class InitCommand extends Command
     protected function configure(): void
     {
         parent::configure();
-        $this->setDescription('Создание структуры катологов или создание таблицы под хранение текстов')
-            ->setHelp('Создаёт структуру катологов или создаёт таблицу под хранение текстов');
+        $this->setDescription(LocalLang::init()->phrase('messages', 'language-init'))
+            ->setHelp(LocalLang::init()->phrase('messages', 'language-init2'));
     }
 
     /**

@@ -10,6 +10,7 @@ declare (strict_types=1);
 namespace kradwhite\language\command;
 
 use kradwhite\language\LangException;
+use kradwhite\language\LocalLang;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -28,8 +29,8 @@ class NamesCommand extends Command
     protected function configure(): void
     {
         parent::configure();
-        $this->setDescription('Вывод имён текстов со всех конфигураций')
-            ->setHelp('Выводит имёна текстов со всех конфигураций');
+        $this->setDescription(LocalLang::init()->phrase('messages', 'names'))
+            ->setHelp(LocalLang::init()->phrase('messages', 'names2'));
     }
 
     /**
@@ -41,7 +42,7 @@ class NamesCommand extends Command
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
         if ($app = $this->buildApp($input, $output)) {
-            $output->writeln("Имена всех конфигурация языка:");
+            $output->writeln(LocalLang::init()->phrase('messages', 'names3'));
             foreach ($app->names() as $name) {
                 $output->writeln($name);
             }

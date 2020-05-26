@@ -60,7 +60,7 @@ class Lang
     public static function init(string $configFilename, string $locale = 'ru'): Lang
     {
         if (!file_exists($configFilename)) {
-            throw new LangException("Файл с конфигурацией '$configFilename' не найден");
+            throw new LangException("config-file-not-found", [$configFilename]);
         }
         return new Lang(require $configFilename, $locale);
     }
@@ -107,15 +107,15 @@ class Lang
         $source = __DIR__ . DIRECTORY_SEPARATOR . self::Name;
         $target = $path . DIRECTORY_SEPARATOR . self::Name;
         if (!file_exists($path)) {
-            throw new LangException("Директория '$path' не существует");
+            throw new LangException('dir-not-exist', [$path]);
         } else if (!is_dir($path)) {
-            throw new LangException("'$path' не является директорией");
+            throw new LangException('dir-not-dir', [$path]);
         } else if (file_exists($target)) {
-            throw new LangException("Файл конфигурации '$target' уже существует");
+            throw new LangException('config-file-already-exist', [$target]);
         } else if (!file_exists($source)) {
-            throw new LangException("Исходный файл конфигурации языков не найден '$source'");
+            throw new LangException('source-config-not-found', [$source]);
         } else if (!copy($source, $target)) {
-            throw new LangException("Ошибка копирования файла конфигурации '$target'");
+            throw new LangException('config-copy-error', [$target]);
         }
     }
 

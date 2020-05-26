@@ -8,6 +8,7 @@
 namespace kradwhite\language\command;
 
 use kradwhite\language\LangException;
+use kradwhite\language\LocalLang;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -26,8 +27,8 @@ class ConfigCommand extends Command
     protected function configure(): void
     {
         parent::configure();
-        $this->setDescription('Создание файла конфигурации языка')
-            ->setHelp('Создаёт файл конфигурации языка');
+        $this->setDescription(LocalLang::init()->phrase('messages', 'config-create'))
+            ->setHelp(LocalLang::init()->phrase('messages', 'config-create2'));
     }
 
     /**

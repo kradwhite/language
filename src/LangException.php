@@ -9,11 +9,24 @@ declare (strict_types=1);
 
 namespace kradwhite\language;
 
+use Throwable;
+
 /**
  * Class LangException
  * @package kradwhite\language
  */
 class LangException extends \Exception
 {
-
+    /**
+     * LangException constructor.
+     * @param string $name
+     * @param string $id
+     * @param array $params
+     * @param Throwable|null $previous
+     * @throws LangException
+     */
+    public function __construct(string $id, array $params = [], Throwable $previous = null)
+    {
+        parent::__construct(LocalLang::init()->phrase($id, $params), 0, $previous);
+    }
 }

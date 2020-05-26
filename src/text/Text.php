@@ -10,6 +10,7 @@ declare (strict_types=1);
 namespace kradwhite\language\text;
 
 use kradwhite\language\LangException;
+use kradwhite\language\LocalLang;
 
 /**
  * Class Text
@@ -48,7 +49,7 @@ abstract class Text
     public function phrase(string $id, array $params): string
     {
         if (!isset($this->texts[$id])) {
-            throw new LangException("В языке '{$this->locale}' в тексте '{$this->name}' не найдена фраза с идентификатором '$id'");
+            throw new LangException('phrase-not-found', [$this->locale, $this->name, $id]);
         }
         if (!is_array($this->texts[$id])) {
             $this->texts[$id] = [$this->texts[$id]];
@@ -60,7 +61,7 @@ abstract class Text
             return sprintf($this->texts[$id][0], ...$params);
         } catch (\Throwable $e) {
             $params = implode(', ', $params);
-            throw new LangException("Неверные параметры '$params' фразы '{$this->texts[$id][0]}'", 0, $e);
+            throw new LangException('phrase-params', [$params, $this->texts[$id][0]], $e);
         }
     }
 }

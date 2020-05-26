@@ -47,18 +47,18 @@ class TextFactory
     public function buildTexts(array $config): array
     {
         if (!isset($config['texts'])) {
-            throw new LangException("Конфигурация языков должна содержать массив 'texts' => []");
+            throw new LangException('texts-not-found');
         }
         $result = [];
         foreach ($config['texts'] as $textConfig) {
             if (!isset($textConfig['names'])) {
-                throw new LangException("Конфигурация языка должна содержать массив имён текстов 'names' => []");
+                throw new LangException('texts-not-found');
             } else if (in_array($textConfig['type'], ['php'])) {
                 $result[] = $this->buildFileTexts($textConfig);
             } else if ($textConfig['type'] == 'database') {
                 $result[] = $this->buildDbTexts($textConfig);
             } else {
-                throw new LangException("Неизвестный тип '{$textConfig['type']}' ресурсов");
+                throw new LangException('type-unknown', [$textConfig['type']]);
             }
         }
         return $result;
@@ -72,7 +72,7 @@ class TextFactory
     public function buildFileTexts(array $config): FileTexts
     {
         if (!isset($config['directory'])) {
-            throw new LangException("Для ресурсов типа '{$config['type']}' требуется имя директории 'directory' => 'path'");
+            throw new LangException('dir-key-not-found', [$config['type']]);
         }
         return new FileTexts($config['type'], $config['names'], $this, $config['directory']);
     }
@@ -88,7 +88,7 @@ class TextFactory
         if (!isset($config['repository'])) {
             $config['repository'] = SqlTextRepository::class;
         } else if (!is_a($config['repository'], TextRepository::class, true)) {
-            throw new LangException("Класс репозитория '{$config['repository']}' должен реализовывать интерфейс '" . TextRepository::class . "'");
+            throw new LangException('repo-class', [$config['repository']]);
         }
         $repository = new $config['repository']($dbConfig);
         return new DbTexts($config['type'], $config['names'], $this, $dbConfig, $repository);

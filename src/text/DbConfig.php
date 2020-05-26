@@ -74,7 +74,7 @@ class DbConfig
     public function connection(): array
     {
         if (!isset($this->config['connection'])) {
-            throw new LangException("Для ресурсов типа '{$this->config['type']}' требуется конфигурация 'connection' => []");
+            throw new LangException('connection-not-found', [$this->config['type']]);
         }
         return $this->config['connection'];
     }

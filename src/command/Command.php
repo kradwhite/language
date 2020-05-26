@@ -10,9 +10,9 @@ declare (strict_types=1);
 namespace kradwhite\language\command;
 
 use kradwhite\db\exception\DbException;
-use kradwhite\language\Config;
 use kradwhite\language\Lang;
 use kradwhite\language\LangException;
+use kradwhite\language\LocalLang;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,9 +36,9 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     {
         if (!$this->app) {
             if (!$target = $this->getConfigFileName($input)) {
-                $output->writeln('<fg=red>Ошика получения рабочего каталога. Возмножно нехватает доступа на чтение у одно из каталогов в цепочке.</>');
+                $output->writeln(LocalLang::init()->phrase('messages', 'get-directory-error'));
             } else if (!file_exists($target)) {
-                $output->writeln("<fg=red>Файла '$target' не существует");
+                $output->writeln(LocalLang::init()->phrase('messages', 'file-not-exist', [$target]));
             } else {
                 $this->app = $target ? new Lang(require_once $target) : null;
             }
@@ -77,11 +77,11 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     {
         try {
             if (!$result = $this->doExecute($input, $output)) {
-                $output->writeln("<fg=green>Успешно выполнено</>");
+                $output->writeln(LocalLang::init()->phrase('messages', 'success'));
             }
             return $result;
         } catch (LangException|DbException $e) {
-            $output->writeln("<fg=red>{$e->getMessage()}</>");
+            $output->writeln(LocalLang::init()->phrase('messages', 'exception', [$e->getMessage()]));
         }
         return 1;
     }
@@ -92,7 +92,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     protected function configure()
     {
         $this->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
-            'Путь хранения файла конфигурации языка', '.');
+            LocalLang::init()->phrase('messages', 'filepath'), '.');
     }
 
     /**
