@@ -74,7 +74,7 @@ class DbConfigTest extends \Codeception\Test\Unit
 
     public function testConnectionFail()
     {
-        $this->tester->expectThrowable(new LangException("Для ресурсов типа 'database' требуется конфигурация 'connection' => []"), function () {
+        $this->tester->expectThrowable(new LangException('connection-not-found', ['database']), function () {
             (new DbConfig(['type' => 'database']))->connection();
         });
     }

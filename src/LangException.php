@@ -19,7 +19,6 @@ class LangException extends \Exception
 {
     /**
      * LangException constructor.
-     * @param string $name
      * @param string $id
      * @param array $params
      * @param Throwable|null $previous
@@ -27,6 +26,6 @@ class LangException extends \Exception
      */
     public function __construct(string $id, array $params = [], Throwable $previous = null)
     {
-        parent::__construct(LocalLang::init()->phrase($id, $params), 0, $previous);
+        parent::__construct(LocalLang::init()->phrase('exceptions', $id, $params), 0, $previous);
     }
 }

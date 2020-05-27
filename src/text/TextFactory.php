@@ -52,7 +52,7 @@ class TextFactory
         $result = [];
         foreach ($config['texts'] as $textConfig) {
             if (!isset($textConfig['names'])) {
-                throw new LangException('texts-not-found');
+                throw new LangException('names-not-found');
             } else if (in_array($textConfig['type'], ['php'])) {
                 $result[] = $this->buildFileTexts($textConfig);
             } else if ($textConfig['type'] == 'database') {
@@ -88,7 +88,7 @@ class TextFactory
         if (!isset($config['repository'])) {
             $config['repository'] = SqlTextRepository::class;
         } else if (!is_a($config['repository'], TextRepository::class, true)) {
-            throw new LangException('repo-class', [$config['repository']]);
+            throw new LangException('repo-wrong', [$config['repository']]);
         }
         $repository = new $config['repository']($dbConfig);
         return new DbTexts($config['type'], $config['names'], $this, $dbConfig, $repository);

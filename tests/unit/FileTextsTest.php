@@ -25,7 +25,7 @@ class FileTextsTest extends \Codeception\Test\Unit
     // tests
     public function testTextFailFileNotExist()
     {
-        $this->tester->expectThrowable(new LangException("Файл '/ru/errors.php' не существует"), function () {
+        $this->tester->expectThrowable(new LangException('file-not-exist', ['/ru/errors.php']), function () {
             $factory = $this->make(TextFactory::class, ['buildFileText' => $this->make(FileText::class)]);
             $texts = new FileTexts('php', ['names' => ['errors']], $factory, '');
             $texts->getText('ru', 'errors');
@@ -42,7 +42,7 @@ class FileTextsTest extends \Codeception\Test\Unit
 
     public function testInitTextsFileDirectoryNotFound()
     {
-        $this->tester->expectThrowable(new LangException("Для ресурсов типа 'php' требуется имя директории 'directory' => 'path'"), function () {
+        $this->tester->expectThrowable(new LangException('dir-key-not-found', ['php']), function () {
             (new FileTexts('php', ['names'], $this->make(TextFactory::class), ''))->create(['ru']);
         });
     }

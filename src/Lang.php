@@ -47,7 +47,7 @@ class Lang
         if (!isset($this->config['default'])) {
             $this->config['default'] = 'default';
         }
-        $this->locale = $locale ? $locale : $this->config['locales'][0];
+        $this->locale = $locale && in_array($locale, $this->config['locales']) ? $locale : $this->config['locales'][0];
         $this->initTexts();
     }
 
@@ -157,7 +157,7 @@ class Lang
                 return $texts->getText($this->locale, $name);
             }
         }
-        throw new LangException("Набор фраз с именем '$name' не найден");
+        throw new LangException('text-not-found', [$name]);
     }
 
     /**
@@ -169,7 +169,7 @@ class Lang
         if (!isset($this->config['factory'])) {
             $this->config['factory'] = TextFactory::class;
         } else if (!is_a($this->config['factory'], TextFactory::class, true)) {
-            throw new LangException("Класс фабрики '{$this->config['factory']}' должен наследовать " . TextFactory::class);
+            throw new LangException('factory-wrong', [$this->config['factory']]);
         }
         $factory = new $this->config['factory']();
         $this->texts = $factory->buildTexts($this->config);

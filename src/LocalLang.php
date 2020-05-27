@@ -28,7 +28,7 @@ class LocalLang extends Lang
     {
         if (!self::$lang) {
             $configFilename = __DIR__ . '/../language.php';
-            $rawLocale = setlocale(LC_ALL, '');
+            $rawLocale = (string)getenv('LANG');
             $locale = substr($rawLocale, 0, 2);
             self::$lang = parent::init($configFilename, $locale);
         }

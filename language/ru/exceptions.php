@@ -1,5 +1,6 @@
 <?php
 
+use kradwhite\language\text\TextFactory;
 use kradwhite\language\text\TextRepository;
 
 return [
@@ -10,15 +11,17 @@ return [
     'file-create-error' => "Ошибка создания файла '%s'",
     'file-unknown-type' => "Неизвестный тип '%s' файла '%s'",
     'phrase-not-found' => "В языке '%s' в тексте '%s' не найдена фраза с идентификатором '%s'",
-    'phrase-params' => "Неверные параметры '%s' фразы '%s'",
+    'phrase-params-wrong' => "Неверные параметры '%s' фразы '%s'",
     'texts-not-found' => "Конфигурация языков должна содержать массив 'texts' => []",
-    'names-not-found' => "Конфигурация языка должна содержать массив имён текстов 'names' => []",
+    'names-not-found' => "Конфигурация текста языка должна содержать массив имён текстов 'names' => []",
     'type-unknown' => "Неизвестный тип '%s' ресурсов",
-    'repo-class' => "Класс репозитория '%s' должен реализовывать интерфейс '" . TextRepository::class . "'",
+    'repo-wrong' => "Класс репозитория '%s' должен реализовывать интерфейс '" . TextRepository::class . "'",
     'config-file-not-found' => "Файл с конфигурацией '%s' не найден",
     'dir-not-exist' => "Директория '%s' не существует",
     'dir-not-dir' => "'%s' не является директорией",
     'config-file-already-exist' => "Файл конфигурации '%s' уже существует",
     'source-config-not-found' => "Исходный файл конфигурации языков не найден '%s'",
     'config-copy-error' => "Ошибка копирования файла конфигурации '%s'",
+    'text-not-found' => "Набор фраз с именем '%s' не найден",
+    'factory-wrong' => "Класс фабрики '%s' должен наследовать " . TextFactory::class,
 ];

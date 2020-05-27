@@ -2,8 +2,8 @@
 
 namespace kradwhite\tests\unit;
 
-use kradwhite\language\text\FileText;
 use kradwhite\language\LangException;
+use kradwhite\language\text\FileText;
 
 class FileTextTest extends \Codeception\Test\Unit
 {
@@ -23,7 +23,7 @@ class FileTextTest extends \Codeception\Test\Unit
     // tests
     public function testPhraseNotFound()
     {
-        $this->tester->expectThrowable(new LangException("В языке 'ru' в тексте 'error' не найдена фраза с идентификатором 'not_exist'"), function () {
+        $this->tester->expectThrowable(new LangException('phrase-not-found', ['ru', 'error', 'not_exist']), function () {
             (new FileText('ru', 'error', []))->phrase('not_exist', []);
         });
     }
@@ -48,7 +48,7 @@ class FileTextTest extends \Codeception\Test\Unit
 
     public function testPhraseFoundWrongParams()
     {
-        $this->tester->expectThrowable(new LangException("Неверные параметры '' фразы 'Simple %s'"), function () {
+        $this->tester->expectThrowable(new LangException('phrase-params-wrong', ['', 'Simple %s']), function () {
             (new FileText('', '', ['wrong_params' => ['Simple %s']]))->phrase('wrong_params', []);
         });
     }

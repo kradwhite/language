@@ -2,8 +2,6 @@
 
 namespace kradwhite\tests\unit;
 
-use kradwhite\db\Connection;
-use kradwhite\db\driver\DriverFactory;
 use kradwhite\language\text\DbConfig;
 use kradwhite\language\text\DbTexts;
 use kradwhite\language\text\SqlTextRepository;
@@ -15,7 +13,7 @@ class DbTextsTest extends \Codeception\Test\Unit
      * @var \UnitTester
      */
     protected $tester;
-    
+
     protected function _before()
     {
     }

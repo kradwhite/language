@@ -2,7 +2,6 @@
 
 namespace kradwhite\tests\unit;
 
-use kradwhite\language\Config;
 use kradwhite\language\LangException;
 use kradwhite\language\text\DbText;
 use kradwhite\language\text\DbTexts;
@@ -10,8 +9,6 @@ use kradwhite\language\text\FileText;
 use kradwhite\language\text\FileTexts;
 use kradwhite\language\text\SqlTextRepository;
 use kradwhite\language\text\TextFactory;
-use kradwhite\language\text\TextRepository;
-use kradwhite\language\text\Texts;
 
 class TextFactoryTest extends \Codeception\Test\Unit
 {
@@ -42,7 +39,7 @@ class TextFactoryTest extends \Codeception\Test\Unit
 
     public function testBuildFileTextNotFoundDirectory()
     {
-        $this->tester->expectThrowable(new LangException("Для ресурсов типа 'php' требуется имя директории 'directory' => 'path'"), function () {
+        $this->tester->expectThrowable(new LangException('dir-key-not-found', ['php']), function () {
             (new TextFactory())->buildFileTexts(['type' => 'php']);
         });
     }
@@ -64,21 +61,21 @@ class TextFactoryTest extends \Codeception\Test\Unit
     // tests
     public function testBuildTextsFailTextsArrayNotFound()
     {
-        $this->tester->expectThrowable(new LangException("Конфигурация языков должна содержать массив 'texts' => []"), function () {
+        $this->tester->expectThrowable(new LangException('texts-not-found'), function () {
             (new TextFactory())->buildTexts([]);
         });
     }
 
     public function testBuildTextsFailNamesArrayNotFound()
     {
-        $this->tester->expectThrowable(new LangException("Конфигурация языка должна содержать массив имён текстов 'names' => []"), function () {
+        $this->tester->expectThrowable(new LangException('names-not-found'), function () {
             (new TextFactory())->buildTexts(['texts' => [[]]]);
         });
     }
 
     public function testBuildTextsFailWrongType()
     {
-        $this->tester->expectThrowable(new LangException("Неизвестный тип 'wrong' ресурсов"), function () {
+        $this->tester->expectThrowable(new LangException('type-unknown', ['wrong']), function () {
             (new TextFactory())->buildTexts(['texts' => [['type' => 'wrong', 'names' => []]]]);
         });
     }

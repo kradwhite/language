@@ -2,6 +2,8 @@
 
 namespace kradwhite\tests\command;
 
+use kradwhite\language\LocalLang;
+
 class NamesCommandTest extends \Codeception\Test\Unit
 {
     /**
@@ -21,6 +23,6 @@ class NamesCommandTest extends \Codeception\Test\Unit
     public function testExecute()
     {
         $this->tester->runShellCommand('php lang names -p tests/_data/config');
-        $this->tester->canSeeInShellOutput("Имена всех конфигурация языка:\nerrors\n");
+        $this->tester->canSeeInShellOutput(LocalLang::init()->phrase('messages', 'names3'));
     }
 }

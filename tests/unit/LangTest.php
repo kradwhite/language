@@ -63,7 +63,7 @@ class LangTest extends \Codeception\Test\Unit
 
     public function testInitConfigFailDirectoryNotExist()
     {
-        $this->tester->expectThrowable(new LangException("Директория 'path/not/exist' не существует"), function () {
+        $this->tester->expectThrowable(new LangException('dir-not-exist', ['path/not/exist']), function () {
             (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig('path/not/exist');
         });
     }
@@ -71,7 +71,7 @@ class LangTest extends \Codeception\Test\Unit
     public function testInitConfigFailNotDirectory()
     {
         $path = __DIR__ . '/../_data/config/language.php';
-        $this->tester->expectThrowable(new LangException("'$path' не является директорией"), function () use ($path) {
+        $this->tester->expectThrowable(new LangException('dir-not-dir', [$path]), function () use ($path) {
             (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig($path);
         });
     }
@@ -83,7 +83,7 @@ class LangTest extends \Codeception\Test\Unit
         if (!file_exists("$pwd/tests/_data/config/language.php")) {
             file_put_contents("$pwd/tests/_data/config/language.php", '<?php');
         }
-        $this->tester->expectThrowable(new LangException("Файл конфигурации '$path/language.php' уже существует"), function () use ($path) {
+        $this->tester->expectThrowable(new LangException('config-file-already-exist', ["$path/language.php"]), function () use ($path) {
             (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig($path);
         });
     }
@@ -117,7 +117,7 @@ class LangTest extends \Codeception\Test\Unit
 
     public function testInitFailFileNotFound()
     {
-        $this->tester->expectThrowable(new LangException("Файл с конфигурацией 'file.php' не найден"), function () {
+        $this->tester->expectThrowable(new LangException('config-file-not-found', ['file.php']), function () {
             Lang::init('file.php');
         });
     }

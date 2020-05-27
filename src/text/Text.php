@@ -61,7 +61,7 @@ abstract class Text
             return sprintf($this->texts[$id][0], ...$params);
         } catch (\Throwable $e) {
             $params = implode(', ', $params);
-            throw new LangException('phrase-params', [$params, $this->texts[$id][0]], $e);
+            throw new LangException('phrase-params-wrong', [$params, $this->texts[$id][0]], $e);
         }
     }
 }
