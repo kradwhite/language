@@ -2,6 +2,7 @@
 
 namespace kradwhite\tests\unit;
 
+use kradwhite\config\ConfigException;
 use kradwhite\language\Lang;
 use kradwhite\language\LangException;
 use kradwhite\language\text\FileText;
@@ -63,7 +64,7 @@ class LangTest extends \Codeception\Test\Unit
 
     public function testInitConfigFailDirectoryNotExist()
     {
-        $this->tester->expectThrowable(new LangException('dir-not-exist', ['path/not/exist']), function () {
+        $this->tester->expectThrowable(new ConfigException('directory-not-found', ['path/not/exist']), function () {
             (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig('path/not/exist');
         });
     }
@@ -71,7 +72,7 @@ class LangTest extends \Codeception\Test\Unit
     public function testInitConfigFailNotDirectory()
     {
         $path = __DIR__ . '/../_data/config/language.php';
-        $this->tester->expectThrowable(new LangException('dir-not-dir', [$path]), function () use ($path) {
+        $this->tester->expectThrowable(new ConfigException('directory-not-directory', [$path]), function () use ($path) {
             (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig($path);
         });
     }

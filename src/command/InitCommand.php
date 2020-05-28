@@ -25,6 +25,8 @@ class InitCommand extends Command
 
     /**
      * @return void
+     * @throws DbException
+     * @throws LangException
      */
     protected function configure(): void
     {

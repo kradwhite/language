@@ -8,7 +8,7 @@ class ConfigCommandTest extends \Codeception\Test\Unit
      * @var \CommandTester
      */
     protected $tester;
-    
+
     protected function _before()
     {
     }
@@ -21,7 +21,7 @@ class ConfigCommandTest extends \Codeception\Test\Unit
     public function testExecuteSuccess()
     {
         $cd = getcwd();
-        if(file_exists("$cd/tests/_data/language.php")){
+        if (file_exists("$cd/tests/_data/language.php")) {
             $this->tester->deleteFile("$cd/tests/_data/language.php");
         }
         $this->tester->runShellCommand('php lang config -p tests/_data');

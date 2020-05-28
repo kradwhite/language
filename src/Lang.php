@@ -9,6 +9,8 @@ declare (strict_types=1);
 
 namespace kradwhite\language;
 
+use kradwhite\config\Config;
+use kradwhite\config\ConfigException;
 use kradwhite\db\exception\DbException;
 use kradwhite\language\text\Text;
 use kradwhite\language\text\TextFactory;
@@ -100,23 +102,15 @@ class Lang
     /**
      * @param string $path
      * @return void
-     * @throws LangException
+     * @throws ConfigException
      */
     public function initConfig(string $path)
     {
-        $source = __DIR__ . DIRECTORY_SEPARATOR . self::Name;
-        $target = $path . DIRECTORY_SEPARATOR . self::Name;
-        if (!file_exists($path)) {
-            throw new LangException('dir-not-exist', [$path]);
-        } else if (!is_dir($path)) {
-            throw new LangException('dir-not-dir', [$path]);
-        } else if (file_exists($target)) {
-            throw new LangException('config-file-already-exist', [$target]);
-        } else if (!file_exists($source)) {
-            throw new LangException('source-config-not-found', [$source]);
-        } else if (!copy($source, $target)) {
-            throw new LangException('config-copy-error', [$target]);
+        $source = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'src/config';
+        if (file_exists($path . DIRECTORY_SEPARATOR . self::Name)) {
+            throw new LangException('config-file-already-exist', [$path . DIRECTORY_SEPARATOR . self::Name]);
         }
+        (new Config($source))->build($path, $this->locale);
     }
 
     /**

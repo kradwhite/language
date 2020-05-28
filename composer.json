@@ -20,9 +20,10 @@
     ],
     "require": {
         "php": "~7.4",
+        "ext-json": "*",
+        "kradwhite/config": "*",
         "kradwhite/db": "*",
-        "symfony/console": "^5.0",
-        "ext-json": "*"
+        "symfony/console": "^5.0"
     },
     "require-dev": {
         "codeception/codeception": "^4.1",
