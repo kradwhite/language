@@ -94,9 +94,9 @@ class LangTest extends \Codeception\Test\Unit
         $this->tester->amInPath('tests/_data');
         $pwd = getcwd();
         if (file_exists("$pwd/config/language.php")) {
-            $this->tester->deleteFile("$pwd/config/language.php", '<?php');
+            $this->tester->deleteFile("$pwd/config/language.php");
         }
-        (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']]]))->initConfig($pwd . '/config');
+        (new Lang(['texts' => [['names' => ['one'], 'type' => 'php', 'directory' => 'dir']], 'locales' => ['en', 'ru']]))->initConfig($pwd . '/config');
         $this->assertFileExists($pwd . '/config/language.php');
     }
 

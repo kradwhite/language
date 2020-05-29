@@ -49,8 +49,8 @@ class ConfigCommand extends Command
      * @param InputInterface $input
      * @return string
      */
-    protected function getConfigFileName(InputInterface $input): string
+/*    protected function getConfigFileName(InputInterface $input): string
     {
         return __DIR__ . '/../config/templates/language.php';
-    }
+    }*/
 }

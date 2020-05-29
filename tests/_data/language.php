@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Допускается одновременное использование нескольких хранилищ с разными источниками
+ * Допускается одновременное использование нескольких хранилищ
  * Значения в массивах 'names' должны быть уникальными на уровне приложения
  */
 
 return [
     // допустимые языки, первое значение будет значением по умолчанию
-    //'locales' => ['ru'],
+    'locales' => ['ru', 'en'],
 
     // имя набора фраз по умолчанию
     //'default' => 'errors',
@@ -15,7 +15,7 @@ return [
     // допустимо создать свою фабрику, унаследовав \kradwhite\language\text\TextFactory
     //'factory' => \kradwhite\language\text\TextFactory::class,
 
-    // хранилища текстов
+    // хранилища языков
     'texts' => [
         /* конфигурация для хранения фраз в файлах */
         [
@@ -23,10 +23,10 @@ return [
             'type' => 'php',
 
             // имена набора фраз, в файловом хранилище имена файлов
-            'names' => ['errors'],
+            'names' => ['messages', 'exceptions'],
 
             // путь к директории, которая будет хранить файлы в фразами
-            'directory' => __DIR__ . DIRECTORY_SEPARATOR . 'language'
+            'directory' => __DIR__ . DIRECTORY_SEPARATOR . 'work' . DIRECTORY_SEPARATOR . 'language'
         ],
 
         // конфигурация для хранения фраз в базе данных
@@ -38,16 +38,16 @@ return [
             // имена набора фраз, в бд хранилище значение в колонке name
             'names' => ['messages'],
 
-            // имя таблицы с фразами
+            // имя таблицы хранящей фразы
             'table' => 'kw_language',
 
-            // ограничение длины фразы в бд
+            // ограничение длинны фразы в бд
             'textLimit' => 256,
 
-            // ограничение длины строки параметров в бд
+            // ограничение длинны строки параметров в бд
             'paramsLimit' => 256,
 
-            //
+            // имена колонок
             'columns => [
                 'locale' => 'locale',
                 'name' => 'name',
@@ -56,10 +56,10 @@ return [
                 'params' => 'params'
             ],
 
-            // имена колонок \kradwhite\language\text\TextRepository
+            // допустимо создать свой репозиторий, реализовав интерфейс \kradwhite\language\text\TextRepository
             'repository' => \kradwhite\language\text\SqlTextRepository::class,
 
-            // допускается создать свой репозиторий, реализовав интерфейс
+            // конфигурация передаётся в конструктор репозитория
             'connection' => [
                 'driver' => 'pgsql',                                // или 'mysql'
                 'host' => 'localhost',

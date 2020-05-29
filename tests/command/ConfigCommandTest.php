@@ -21,11 +21,11 @@ class ConfigCommandTest extends \Codeception\Test\Unit
     public function testExecuteSuccess()
     {
         $cd = getcwd();
-        if (file_exists("$cd/tests/_data/language.php")) {
-            $this->tester->deleteFile("$cd/tests/_data/language.php");
+        if (file_exists("$cd/tests/_data/work/language.php")) {
+            $this->tester->deleteFile("$cd/tests/_data/work/language.php");
         }
-        $this->tester->runShellCommand('php lang config -p tests/_data');
-        $this->assertFileExists("$cd/tests/_data/language.php");
-        $this->tester->deleteFile("$cd/tests/_data/language.php");
+        $this->tester->runShellCommand('php lang config -p tests/_data/work');
+        $this->assertFileExists("$cd/tests/_data/work/language.php");
+        $this->tester->deleteFile("$cd/tests/_data/work/language.php");
     }
 }

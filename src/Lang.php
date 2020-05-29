@@ -107,6 +107,10 @@ class Lang
     public function initConfig(string $path)
     {
         $source = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'src/config';
+        if (!isset($path[0]) || $path[0] != DIRECTORY_SEPARATOR) {
+            $path = getcwd();
+        }
+        print_r(['path' => $path, 'source' => $source]);
         if (file_exists($path . DIRECTORY_SEPARATOR . self::Name)) {
             throw new LangException('config-file-already-exist', [$path . DIRECTORY_SEPARATOR . self::Name]);
         }
