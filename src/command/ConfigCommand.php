@@ -30,10 +30,11 @@ class ConfigCommand extends Command
     protected function configure(): void
     {
         parent::configure();
-        $this->setDescription(LocalLang::init()->phrase('messages', 'config-create'))
-            ->setHelp(LocalLang::init()->phrase('messages', 'config-create2'))
+        $text = LocalLang::init()->text('messages');
+        $this->setDescription($text->phrase('config-create'))
+            ->setHelp($text->phrase('config-create2'))
             ->addOption('locale', 'l', InputOption::VALUE_OPTIONAL,
-                '', 'en');
+                $text->phrase('locale'), 'en');
     }
 
     /**

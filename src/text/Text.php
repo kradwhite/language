@@ -45,7 +45,7 @@ abstract class Text
      * @return string
      * @throws LangException
      */
-    public function phrase(string $id, array $params): string
+    public function phrase(string $id, array $params = []): string
     {
         if (!isset($this->texts[$id])) {
             throw new LangException('phrase-not-found', [$this->locale, $this->name, $id]);

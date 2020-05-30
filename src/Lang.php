@@ -44,7 +44,10 @@ class Lang
     {
         $this->config = $config;
         if (!isset($this->config['locales'])) {
-            $this->config['locales'] = ['ru'];
+            $this->config['locales'] = [$locale ? $locale : 'ru'];
+        }
+        if ($locale && !in_array($locale, $this->config['locales'])) {
+            $this->config['locales'][] = $locale;
         }
         if (!isset($this->config['default'])) {
             $this->config['default'] = 'default';

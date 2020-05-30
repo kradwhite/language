@@ -38,7 +38,7 @@ class DbText extends Text
      * @return string
      * @throws LangException
      */
-    public function phrase(string $id, array $params): string
+    public function phrase(string $id, array $params = []): string
     {
         if (!isset($this->texts[$id])) {
             $this->texts[$id] = $this->repository->loadPhrase($this->locale, $this->name, $id);
