@@ -10,7 +10,7 @@ class NamesCommandTest extends \Codeception\Test\Unit
      * @var \CommandTester
      */
     protected $tester;
-    
+
     protected function _before()
     {
     }
@@ -22,7 +22,8 @@ class NamesCommandTest extends \Codeception\Test\Unit
     // tests
     public function testExecute()
     {
-        $this->tester->runShellCommand('php lang names -p tests/_data/config');
-        $this->tester->canSeeInShellOutput(LocalLang::init()->phrase('messages', 'names3'));
+        $this->tester->runShellCommand('php lang names -p tests/_data/testNamesCommandExecute');
+        $this->tester->canSeeInShellOutput(LocalLang::init()->phrase('messages', 'names3')
+            . "\nmessages\nexceptions\nerrors\n");
     }
 }

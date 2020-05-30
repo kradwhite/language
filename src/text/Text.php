@@ -10,7 +10,6 @@ declare (strict_types=1);
 namespace kradwhite\language\text;
 
 use kradwhite\language\LangException;
-use kradwhite\language\LocalLang;
 
 /**
  * Class Text

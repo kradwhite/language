@@ -13,4 +13,5 @@ return [
     'names' => 'Output text names from all configurations',
     'names2' => 'Displays the names of the texts with all configurations',
     'names3' => 'The names of all the configuration language:',
+    'locale' => 'Locale language (ru, en, etc.)',
 ];

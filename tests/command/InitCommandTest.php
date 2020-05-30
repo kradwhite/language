@@ -21,13 +21,14 @@ class InitCommandTest extends \Codeception\Test\Unit
     public function testExecute()
     {
         $cd = getcwd();
-        if(file_exists("$cd/src/language")){
-            $this->tester->deleteDir("$cd/src/language");
+        $work = 'tests/_data/testInitCommandExecute';
+        if (file_exists("$cd/$work/language")) {
+            $this->tester->deleteDir("$cd/$work/language");
         }
-        $this->tester->runShellCommand('php lang init ');
-        $this->assertDirectoryExists("$cd/src/language");
-        $this->assertDirectoryExists("$cd/src/language/ru");
-        $this->assertFileExists("$cd/src/language/ru/errors.php");
-        $this->tester->deleteDir("$cd/src/language");
+        $this->tester->runShellCommand("php lang init -p $work");
+        $this->assertDirectoryExists("$cd/$work/language");
+        $this->assertDirectoryExists("$cd/$work/language/ru");
+        $this->assertFileExists("$cd/$work/language/ru/errors.php");
+        $this->tester->deleteDir("$cd/$work/language");
     }
 }

@@ -23,10 +23,10 @@ return [
             'type' => 'php',
 
             // имена набора фраз, в файловом хранилище имена файлов
-            'names' => ['messages', 'exceptions'],
+            'names' => ['errors'],
 
             // путь к директории, которая будет хранить файлы в фразами
-            'directory' => __DIR__ . DIRECTORY_SEPARATOR . 'work' . DIRECTORY_SEPARATOR . 'language'
+            'directory' => __DIR__ . DIRECTORY_SEPARATOR . 'language'
         ],
 
         // конфигурация для хранения фраз в базе данных

@@ -7,9 +7,12 @@
 
 namespace kradwhite\language\command;
 
+use kradwhite\config\ConfigException;
+use kradwhite\language\Lang;
 use kradwhite\language\LangException;
 use kradwhite\language\LocalLang;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -28,7 +31,9 @@ class ConfigCommand extends Command
     {
         parent::configure();
         $this->setDescription(LocalLang::init()->phrase('messages', 'config-create'))
-            ->setHelp(LocalLang::init()->phrase('messages', 'config-create2'));
+            ->setHelp(LocalLang::init()->phrase('messages', 'config-create2'))
+            ->addOption('locale', 'l', InputOption::VALUE_OPTIONAL,
+                '', 'en');
     }
 
     /**
@@ -36,6 +41,7 @@ class ConfigCommand extends Command
      * @param OutputInterface $output
      * @return int
      * @throws LangException
+     * @throws ConfigException
      */
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
@@ -47,10 +53,13 @@ class ConfigCommand extends Command
 
     /**
      * @param InputInterface $input
-     * @return string
+     * @param OutputInterface $output
+     * @return Lang|null
+     * @throws LangException
      */
-/*    protected function getConfigFileName(InputInterface $input): string
+    protected function buildApp(InputInterface $input, OutputInterface $output): ?Lang
     {
-        return __DIR__ . '/../config/templates/language.php';
-    }*/
+        $config = require __DIR__ . '/../config/templates/language.php';
+        return new Lang($config, $input->getOption('locale'));
+    }
 }
